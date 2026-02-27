@@ -31,12 +31,6 @@ const services = [
     description: 'Connect with fresh talent from top universities and colleges across the country for internships and entry-level roles.',
     icon: Users,
   },
-  {
-    id: 'contract-staffing',
-    title: 'Contract Staffing',
-    description: 'Flexible staffing solutions to manage your workforce demands for short-term projects or seasonal peaks.',
-    icon: Users,
-  },
 ];
 
 const howItWorksStudent = [
@@ -59,6 +53,8 @@ const whyChooseUsPoints = [
   'Cost-effective and affordable staffing solutions',
   'Extensive Pan-India workforce network',
   'Dedicated support for all your needs',
+  'Flexible commission models (8-50% or one month salary options)',
+  'Free candidate replacement within 15-30 days',
 ];
 
 const testimonials = [
@@ -95,7 +91,7 @@ export default function Home() {
           <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
             Comprehensive staffing solutions tailored to your business needs.
           </p>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => {
               const image = PlaceHolderImages.find(p => p.id === service.id);
               return (

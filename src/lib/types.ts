@@ -19,7 +19,7 @@ export type StudentProfile = {
   experienceYears: number;
   city: string;
   state: string;
-  jobType: 'Full-time' | 'Part-time' | 'Internship' | 'Contract';
+  jobType: 'Full-time' | 'Part-time' | 'Internship';
   expectedSalary: number;
   cvUrl?: string;
   verified: boolean;
@@ -52,7 +52,7 @@ export type Job = {
   salaryMin?: number;
   salaryMax?: number;
   location: string;
-  jobType: 'Full-time' | 'Part-time' | 'Internship' | 'Contract';
+  jobType: 'Full-time' | 'Part-time' | 'Internship';
   status: 'active' | 'closed' | 'expired';
   searchKeywords: string[];
   createdAt: Date;
