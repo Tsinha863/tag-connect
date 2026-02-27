@@ -102,6 +102,8 @@ export async function signUpWithEmail(
             description: '',
             verified: false,
             createdAt: serverTimestamp(),
+            subscriptionPlan: 'free',
+            subscriptionStatus: 'active',
         };
         await setDoc(doc(firestore, 'companyProfiles', user.uid), companyProfile);
     }

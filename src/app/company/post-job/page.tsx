@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { CompanyProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 
 const jobSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -68,9 +70,21 @@ export default function PostJobPage() {
         },
     });
 
+    const canFeatureJob = companyProfile?.subscriptionPlan === 'basic' || companyProfile?.subscriptionPlan === 'premium';
+    const isFreePlan = !companyProfile?.subscriptionPlan || companyProfile?.subscriptionPlan === 'free';
+
     const onSubmit = (values: z.infer<typeof jobSchema>) => {
         if (!user || !companyProfile) {
             toast({ variant: 'destructive', title: 'Error', description: 'Could not find company profile. You must be logged in as a company to post a job.' });
+            return;
+        }
+
+        if (values.isFeatured && !canFeatureJob) {
+            toast({
+                variant: 'destructive',
+                title: 'Upgrade Required',
+                description: 'You need a Basic or Premium plan to post a featured job.',
+            });
             return;
         }
 
@@ -182,15 +196,24 @@ export default function PostJobPage() {
                         render={({ field }) => (
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
-                                <FormLabel className="text-base">Feature this job</FormLabel>
+                                <FormLabel className={cn("text-base", !canFeatureJob && "text-muted-foreground")}>
+                                    Feature this job
+                                </FormLabel>
                                 <FormDescription>
-                                Featured jobs appear at the top of search results. (Requires a Premium plan).
+                                {isFreePlan ? (
+                                    <>
+                                        Upgrade to a <Link href="/pricing" className="underline font-medium text-primary">Basic or Premium</Link> plan to feature jobs.
+                                    </>
+                                ) : (
+                                    "Featured jobs appear at the top of search results."
+                                )}
                                 </FormDescription>
                             </div>
                             <FormControl>
                                 <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                disabled={!canFeatureJob}
                                 />
                             </FormControl>
                             </FormItem>
@@ -206,5 +229,3 @@ export default function PostJobPage() {
         </div>
     );
 }
-
-    
