@@ -67,6 +67,18 @@ export default function Home() {
   return (
     <>
       <section className="relative bg-gradient-to-b from-background via-blue-50 to-background">
+        {heroImage && (
+          <div className="absolute inset-0 -z-10">
+            <Image
+              src={heroImage.imageUrl}
+              alt={heroImage.description}
+              data-ai-hint={heroImage.imageHint}
+              fill
+              className="object-cover opacity-5"
+              priority
+            />
+          </div>
+        )}
         <div className="container pt-16 pb-24 text-center">
           <h1 className="font-bold text-4xl md:text-6xl lg:text-7xl tracking-tighter">
             TAG MEDIA – Trusted Manpower Provider for <span className="text-primary">Skilled & Unskilled</span> Workforce
