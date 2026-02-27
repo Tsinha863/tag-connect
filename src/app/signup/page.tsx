@@ -85,9 +85,8 @@ export default function SignupPage() {
 
     const handleGoogleSignIn = async () => {
         try {
-          const userCredential = await signInWithGoogle(auth, firestore);
-          // With Google Sign-In, the role is defaulted. User might need to change it later.
-          // For now, redirect based on the default role created.
+          const role = form.getValues('role');
+          const userCredential = await signInWithGoogle(auth, firestore, role);
           await handleRedirect(userCredential.user.uid);
         } catch (error: any) {
           toast({

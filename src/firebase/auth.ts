@@ -6,10 +6,11 @@ import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { Firestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
-export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
+export async function signInWithGoogle(auth: Auth, firestore: Firestore, role: 'student' | 'company' = 'student') {
   const provider = new GoogleAuthProvider();
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
@@ -20,35 +21,50 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
 
   if (!userProfileSnap.exists()) {
     // This is a new user, create a profile.
-    // Defaulting to 'student' role. App should guide user to confirm/change role if necessary.
     const newUserProfile = {
       id: user.uid,
       name: user.displayName || 'Anonymous',
       email: user.email!,
       phone: user.phoneNumber || '',
-      role: 'student', 
+      role: role,
       createdAt: serverTimestamp(),
     };
     await setDoc(userProfileRef, newUserProfile);
     
-    // Create a default student profile since it's the default role
-    const studentProfileRef = doc(firestore, 'studentProfiles', user.uid);
-    await setDoc(studentProfileRef, {
-        id: user.uid,
-        email: user.email!,
-        fullName: user.displayName || 'Anonymous',
-        education: '',
-        stream: '',
-        skills: [],
-        experienceYears: 0,
-        city: '',
-        state: '',
-        jobType: 'Full-time',
-        verified: false,
-        profileCompletionPercentage: 10,
-        searchKeywords: [(user.displayName || 'Anonymous').toLowerCase(), (user.email || '').toLowerCase()],
-        createdAt: serverTimestamp(),
-    });
+    // Create a specific profile based on the selected role
+    if (role === 'student') {
+        const studentProfileRef = doc(firestore, 'studentProfiles', user.uid);
+        await setDoc(studentProfileRef, {
+            id: user.uid,
+            email: user.email!,
+            fullName: user.displayName || 'Anonymous',
+            education: '',
+            stream: '',
+            skills: [],
+            experienceYears: 0,
+            city: '',
+            state: '',
+            jobType: 'Full-time',
+            verified: false,
+            profileCompletionPercentage: 10,
+            searchKeywords: [(user.displayName || 'Anonymous').toLowerCase(), (user.email || '').toLowerCase()],
+            createdAt: serverTimestamp(),
+        });
+    } else if (role === 'company') {
+        const companyProfileRef = doc(firestore, 'companyProfiles', user.uid);
+        await setDoc(companyProfileRef, {
+            id: user.uid,
+            email: user.email!,
+            companyName: user.displayName || 'New Company', // Default company name from display name
+            industry: '',
+            location: '',
+            description: '',
+            verified: false,
+            createdAt: serverTimestamp(),
+            subscriptionPlan: 'free',
+            subscriptionStatus: 'active',
+        });
+    }
   }
 
   return userCredential;
@@ -119,6 +135,10 @@ export async function getUserRole(firestore: Firestore, userId: string): Promise
         return userProfileSnap.data().role || null;
     }
     return null;
+}
+
+export function sendPasswordReset(auth: Auth, email: string) {
+    return sendPasswordResetEmail(auth, email);
 }
 
 export function signOutUser(auth: Auth) {
