@@ -22,9 +22,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { href: "#", icon: Twitter },
-  { href: "#", icon: Github },
-  { href: "#", icon: Linkedin },
+  { name: 'Twitter', href: "#", icon: Twitter },
+  { name: 'Github', href: "#", icon: Github },
+  { name: 'Linkedin', href: "#", icon: Linkedin },
 ];
 
 export function SiteFooter() {
@@ -43,7 +43,7 @@ export function SiteFooter() {
               <h4 className="font-semibold text-foreground mb-4">{title}</h4>
               <ul className="space-y-2">
                 {links.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.label}>
                     <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary">
                       {link.label}
                     </Link>
@@ -59,7 +59,7 @@ export function SiteFooter() {
           </p>
           <div className="flex gap-2">
             {socialLinks.map((link) => (
-              <Button key={link.href} variant="ghost" size="icon" asChild>
+              <Button key={link.name} variant="ghost" size="icon" asChild>
                 <Link href={link.href}>
                   <link.icon className="h-4 w-4" />
                 </Link>
