@@ -38,17 +38,28 @@ import {
   CircleDollarSign,
   Search,
   X,
+  Star
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 function JobCard({ job }: { job: Job & { id: string } }) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className={cn("hover:shadow-lg transition-shadow duration-300 flex flex-col", job.isFeatured && "border-primary border-2 shadow-primary/20")}>
       <CardHeader>
-        <CardTitle>{job.title}</CardTitle>
+         <div className="flex justify-between items-start">
+            <CardTitle>{job.title}</CardTitle>
+            {job.isFeatured && (
+              <Badge>
+                <Star className="mr-1 h-3 w-3" />
+                Featured
+              </Badge>
+            )}
+        </div>
         <CardDescription>{job.companyName || 'A Company'}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-2 text-sm text-muted-foreground">
+      <CardContent className="space-y-2 text-sm text-muted-foreground flex-grow">
         <div className="flex items-center gap-2">
           <MapPin className="h-4 w-4" /> {job.location}
         </div>
@@ -94,6 +105,7 @@ export default function JobsPage() {
     let q = query(
       collection(firestore, 'jobs'),
       where('status', '==', 'open'),
+      orderBy('isFeatured', 'desc'),
       orderBy('createdAt', 'desc')
     );
 
@@ -288,3 +300,5 @@ export default function JobsPage() {
     </div>
   );
 }
+
+    

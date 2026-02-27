@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Briefcase, Calendar, CircleDollarSign, GraduationCap, Lightbulb, MapPin } from 'lucide-react';
+import { Briefcase, Calendar, CircleDollarSign, GraduationCap, Lightbulb, MapPin, Star } from 'lucide-react';
 import { JobApplyButton } from './JobApplyButton';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -92,7 +92,15 @@ export default async function JobDetailsPage({ params }: Props) {
                         <CardHeader>
                             <div className="flex flex-col md:flex-row justify-between md:items-start gap-4">
                                 <div className="flex-1">
-                                    <Badge variant="outline" className="mb-2">{job.jobType}</Badge>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Badge variant="outline">{job.jobType}</Badge>
+                                        {job.isFeatured && (
+                                            <Badge>
+                                                <Star className="mr-1 h-3 w-3" />
+                                                Featured
+                                            </Badge>
+                                        )}
+                                    </div>
                                     <CardTitle className="text-3xl">{job.title}</CardTitle>
                                     <CardDescription className="mt-2 text-base">
                                         {job.location}
@@ -157,3 +165,5 @@ export default async function JobDetailsPage({ params }: Props) {
         </>
     );
 }
+
+    

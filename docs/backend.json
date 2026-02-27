@@ -172,6 +172,30 @@
           "type": "boolean",
           "description": "Indicates whether the company profile has been verified and approved by an admin."
         },
+        "subscriptionPlan": {
+          "type": "string",
+          "description": "The current subscription plan of the company (e.g., 'free', 'basic', 'premium').",
+          "enum": [
+            "free",
+            "basic",
+            "premium"
+          ]
+        },
+        "subscriptionStatus": {
+          "type": "string",
+          "description": "The status of the company's subscription (e.g., 'active', 'inactive', 'trialing').",
+          "enum": [
+            "active",
+            "inactive",
+            "trialing",
+            "past_due"
+          ]
+        },
+        "subscriptionExpiresAt": {
+          "type": "string",
+          "description": "Timestamp when the current subscription period ends.",
+          "format": "date-time"
+        },
         "createdAt": {
           "type": "string",
           "description": "Timestamp when the company profile was first created.",
@@ -253,6 +277,10 @@
         "status": {
           "type": "string",
           "description": "The current status of the job posting (e.g., 'open', 'closed', 'draft')."
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Indicates if the job is a featured posting, giving it higher visibility."
         },
         "searchKeywords": {
           "type": "array",

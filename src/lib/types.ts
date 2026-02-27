@@ -40,6 +40,9 @@ export type CompanyProfile = {
   description: string;
   verified: boolean;
   createdAt: any;
+  subscriptionPlan?: 'free' | 'basic' | 'premium';
+  subscriptionStatus?: 'active' | 'inactive' | 'trialing';
+  subscriptionExpiresAt?: any;
 };
 
 export type Job = {
@@ -58,6 +61,7 @@ export type Job = {
   location: string;
   jobType: 'Full-time' | 'Part-time' | 'Internship';
   status: 'open' | 'closed' | 'draft';
+  isFeatured?: boolean;
   searchKeywords: string[];
   createdAt: any;
   updatedAt?: any;
@@ -101,3 +105,5 @@ export type Inquiry = {
   message: string;
   createdAt: any;
 };
+
+    

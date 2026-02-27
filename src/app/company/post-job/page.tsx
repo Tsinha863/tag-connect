@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { CompanyProfile } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 
 const jobSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -28,6 +29,7 @@ const jobSchema = z.object({
   salaryMax: z.coerce.number().min(0).optional(),
   location: z.string().min(1, 'Location is required.'),
   jobType: z.enum(['Full-time', 'Part-time', 'Internship']),
+  isFeatured: z.boolean().default(false).optional(),
 });
 
 function createSlug(text: string): string {
@@ -62,6 +64,7 @@ export default function PostJobPage() {
             experienceRequired: 0,
             location: '',
             jobType: 'Full-time',
+            isFeatured: false,
         },
     });
 
@@ -90,6 +93,7 @@ export default function PostJobPage() {
             location: values.location,
             jobType: values.jobType,
             status: 'open',
+            isFeatured: values.isFeatured,
             searchKeywords: [values.title, values.location, ...skillsArray, companyProfile.companyName].map(k => k.toLowerCase()),
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
@@ -172,6 +176,26 @@ export default function PostJobPage() {
                             <FormMessage />
                         </FormItem>
                     )} />
+                    <FormField
+                        control={form.control}
+                        name="isFeatured"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <FormLabel className="text-base">Feature this job</FormLabel>
+                                <FormDescription>
+                                Featured jobs appear at the top of search results. (Requires a Premium plan).
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            </FormItem>
+                        )}
+                    />
                     <Button type="submit" disabled={form.formState.isSubmitting}>
                         {form.formState.isSubmitting ? 'Posting Job...' : 'Post Job'}
                     </Button>
@@ -182,3 +206,5 @@ export default function PostJobPage() {
         </div>
     );
 }
+
+    
