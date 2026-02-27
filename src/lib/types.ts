@@ -7,7 +7,7 @@ export type User = {
   email: string;
   phone?: string;
   role: UserRole;
-  createdAt: Date;
+  createdAt: any;
 };
 
 export type StudentProfile = {
@@ -25,7 +25,7 @@ export type StudentProfile = {
   verified: boolean;
   profileCompletionPercentage: number;
   searchKeywords: string[];
-  createdAt: Date;
+  createdAt: any;
 };
 
 export type CompanyProfile = {
@@ -35,11 +35,11 @@ export type CompanyProfile = {
   location: string;
   description: string;
   verified: boolean;
-  createdAt: Date;
+  createdAt: any;
 };
 
 export type Job = {
-  jobId: string;
+  id: string;
   companyId: string;
   companyName: string;
   companyLogo?: string;
@@ -53,24 +53,25 @@ export type Job = {
   salaryMax?: number;
   location: string;
   jobType: 'Full-time' | 'Part-time' | 'Internship';
-  status: 'active' | 'closed' | 'expired';
+  status: 'open' | 'closed' | 'draft';
   searchKeywords: string[];
-  createdAt: Date;
+  createdAt: any;
+  updatedAt?: any;
   applied?: boolean;
 };
 
 export type Application = {
-  applicationId: string;
+  id: string;
   jobId: string;
   studentId: string;
   studentName: string;
   companyId: string;
   status: 'applied' | 'shortlisted' | 'hired' | 'rejected';
-  appliedAt: Date;
+  appliedAt: any;
 };
 
 export type Placement = {
-  placementId: string;
+  id: string;
   studentId: string;
   companyId: string;
   jobId: string;
@@ -78,13 +79,14 @@ export type Placement = {
   commissionPercent: number;
   commissionAmount: number;
   joiningDate: Date;
+  createdAt: any;
 };
 
 export type Inquiry = {
-  inquiryId: string;
+  id: string;
   name: string;
   email: string;
   phone: string;
   message: string;
-  createdAt: Date;
+  createdAt: any;
 };

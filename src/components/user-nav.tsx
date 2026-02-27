@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import {
+  Briefcase,
   LayoutDashboard,
   LogOut,
   Settings,
@@ -89,6 +90,14 @@ export function UserNav() {
                 <Link href="/student/profile">
                   <UserIcon className="mr-2 h-4 w-4" />
                   <span>Profile</span>
+                </Link>
+            </DropdownMenuItem>
+          )}
+          {role === 'company' && (
+            <DropdownMenuItem asChild>
+                <Link href="/company/post-job">
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  <span>Post a Job</span>
                 </Link>
             </DropdownMenuItem>
           )}
