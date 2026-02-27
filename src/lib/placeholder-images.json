@@ -1,3 +1,58 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A diverse group of professionals in a modern office setting, collaborating.",
+      "imageUrl": "https://images.unsplash.com/photo-1761957358394-a90fdd6420c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzIyMDk3MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "diverse professionals"
+    },
+    {
+      "id": "skilled-manpower",
+      "description": "A skilled worker like a software engineer or a technician working on a complex task.",
+      "imageUrl": "https://images.unsplash.com/photo-1584549239925-5554aa6b9183?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxza2lsbGVkJTIwd29ya2VyfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "skilled worker"
+    },
+    {
+      "id": "unskilled-labor",
+      "description": "A group of construction or warehouse workers.",
+      "imageUrl": "https://images.unsplash.com/photo-1586528116691-012ff3ac0fec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXJlaG91c2UlMjB3b3JrZXJzfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "warehouse workers"
+    },
+    {
+      "id": "campus-recruitment",
+      "description": "A group of students at a university campus career fair.",
+      "imageUrl": "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx1bml2ZXJzaXR5JTIwc3R1ZGVudHN8ZW58MHx8fHwxNzcyMTA3MTc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "university students"
+    },
+    {
+      "id": "contract-staffing",
+      "description": "A person signing a contract or shaking hands in a professional setting.",
+      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXNpbmVzcyUyMGhhbmRzaGFrZXxlbnwwfHx8fDE3NzIyMDk3MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "business handshake"
+    },
+    {
+      "id": "testimonial-1",
+      "description": "A smiling professional man.",
+      "imageUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBtYW58ZW58MHx8fHwxNzcyMjA1NjQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional man"
+    },
+    {
+      "id": "testimonial-2",
+      "description": "A smiling professional woman.",
+      "imageUrl": "https://images.unsplash.com/photo-1573497019236-17f8177b81e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjB3b21hbnxlbnwwfHx8fDE3NzIxMzQ3MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "professional woman"
+    },
+    {
+      "id": "testimonial-3",
+      "description": "A person in a hard hat smiling.",
+      "imageUrl": "https://images.unsplash.com/photo-1632862378103-8248dccb7e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29uc3RydWN0aW9uJTIwd29ya2VyfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "construction worker"
+    },
+    {
+      "id": "why-us",
+      "description": "A team celebrating success in an office.",
+      "imageUrl": "https://images.unsplash.com/photo-1771924368572-2ba8c7f6c79d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0ZWFtJTIwY2VsZWJyYXRpb258ZW58MHx8fHwxNzcyMjA5NzEzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "team celebration"
+    }
+  ]
 }
