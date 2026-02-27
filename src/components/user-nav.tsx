@@ -94,12 +94,20 @@ export function UserNav() {
             </DropdownMenuItem>
           )}
           {role === 'company' && (
-            <DropdownMenuItem asChild>
-                <Link href="/company/post-job">
-                  <Briefcase className="mr-2 h-4 w-4" />
-                  <span>Post a Job</span>
-                </Link>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem asChild>
+                  <Link href="/company/profile">
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Company Profile</span>
+                  </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                  <Link href="/company/post-job">
+                    <Briefcase className="mr-2 h-4 w-4" />
+                    <span>Post a Job</span>
+                  </Link>
+              </DropdownMenuItem>
+            </>
           )}
           <DropdownMenuItem disabled>
             <Settings className="mr-2 h-4 w-4" />
@@ -115,3 +123,5 @@ export function UserNav() {
     </DropdownMenu>
   )
 }
+
+    

@@ -1,4 +1,5 @@
 
+
 export type UserRole = 'student' | 'company' | 'admin';
 
 export type User = {
@@ -39,6 +40,10 @@ export type CompanyProfile = {
   location: string;
   description: string;
   verified: boolean;
+  companyProofUrl?: string;
+  personalIdUrl?: string;
+  personalIdType?: 'Aadhar' | 'PAN' | 'Voter ID';
+  personalIdNumber?: string;
   createdAt: any;
   subscriptionPlan?: 'free' | 'basic' | 'premium';
   subscriptionStatus?: 'active' | 'inactive' | 'trialing';
@@ -105,5 +110,7 @@ export type Inquiry = {
   message: string;
   createdAt: any;
 };
+
+    
 
     

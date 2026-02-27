@@ -172,6 +172,25 @@
           "type": "boolean",
           "description": "Indicates whether the company profile has been verified and approved by an admin."
         },
+        "companyProofUrl": {
+          "type": "string",
+          "description": "URL to the uploaded document proving company ownership/registration.",
+          "format": "uri"
+        },
+        "personalIdUrl": {
+          "type": "string",
+          "description": "URL to the uploaded personal identification document of the company representative.",
+          "format": "uri"
+        },
+        "personalIdType": {
+          "type": "string",
+          "description": "The type of personal identification provided.",
+          "enum": ["Aadhar", "PAN", "Voter ID"]
+        },
+        "personalIdNumber": {
+          "type": "string",
+          "description": "The number of the personal identification document."
+        },
         "subscriptionPlan": {
           "type": "string",
           "description": "The current subscription plan of the company (e.g., 'free', 'basic', 'premium').",
@@ -638,4 +657,5 @@
     "reasoning": "The Firestore structure is designed following the core principles of Authorization Independence, Structural Segregation, and consistent Access Modeling to ensure security, scalability, and debuggability. \n\n**Authorization Independence:**\n*   **UserProfile:** Stored at `/users/{userId}`, where `userId` directly corresponds to `request.auth.uid`. The user's `role` is stored within this document, enabling direct role-based authorization checks (`resource.data.role`) without requiring cross-collection lookups.\n*   **StudentProfile & CompanyProfile:** These are top-level collections (`/studentProfiles/{studentId}` and `/companyProfiles/{companyId}`). The `id` field within each document explicitly matches the `studentId` or `companyId` (which is the Firebase `uid`), ensuring direct ownership checks (`request.auth.uid == studentId`) without relying on a parent `user` document's attributes. This allows atomic creation/updates.\n*   **Job:** Stored at `/jobs/{jobId}`. Each `Job` document explicitly includes `companyId`. This denormalization means that rules governing job modifications or deletions can directly verify `request.auth.uid == resource.data.companyId`, avoiding any `get()` operations to the `/companyProfiles` collection.\n*   **Application:** Stored at `/applications/{applicationId}`. Each `Application` document denormalizes both `studentId` and `companyId`. This is critical for authorization independence, allowing students to manage their own applications (`request.auth.uid == resource.data.studentId`) and companies to manage applications for their jobs (`request.auth.uid == resource.data.companyId`) without costly `get()` calls to `Job` or `UserProfile` documents in security rules. The `companyId` is denormalized directly from the `Job` entity at the time of application creation.\n*   **Placement:** Stored at `/placements/{placementId}`. Similar to `Application`, `studentId`, `companyId`, and `jobId` are all denormalized within the document. This enables direct authorization checks for admins, or potentially for the involved student/company for read-only access, ensuring independence from parent entities.\n*   **Inquiry:** Stored at `/inquiries/{inquiryId}`. This collection has a simple security posture: anonymous write for creation, admin-only read for management.\n\n**Support for QAPs (Query-Based Access Patterns):**\n*   **Structural Segregation:** The use of `status` fields (e.g., `Job.status`) allows for natural segregation. For example, public job listings can query `/jobs` filtered by `status: 'open'`, enabling efficient `list` operations without needing complex rule-based filtering (rules are not filters). Draft jobs are implicitly private unless explicitly queried by the `companyId` owner.\n*   **Denormalized IDs for efficient querying:** By including `studentId` and `companyId` directly in `Application` documents, students can query `applications` where `studentId == request.auth.uid` to see their own applications. Similarly, companies can query `applications` where `companyId == request.auth.uid` to see applications for their jobs. This allows for efficient, secure, and indexable queries from the client-side.\n*   **Search Keywords:** `StudentProfile.searchKeywords` and `Job.searchKeywords` fields are explicitly included to facilitate efficient full-text search and filtering capabilities, which is a key QAP for a marketplace application.\n\n**Overall, this design minimizes rule complexity by pushing authorization context into the data structure itself through strategic denormalization and structural segregation, making rules robust, atomic, and easy to debug while supporting efficient data retrieval patterns.**"
   }
 }
+    
     

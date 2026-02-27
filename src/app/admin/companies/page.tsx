@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 export default function AdminCompaniesPage() {
   const firestore = useFirestore();
@@ -54,7 +55,7 @@ export default function AdminCompaniesPage() {
               <TableRow>
                 <TableHead>Company Name</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Industry</TableHead>
+                <TableHead>Documents</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
@@ -64,7 +65,22 @@ export default function AdminCompaniesPage() {
                 <TableRow key={company.id}>
                   <TableCell>{company.companyName}</TableCell>
                   <TableCell>{company.email || 'N/A'}</TableCell>
-                  <TableCell>{company.industry}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {company.companyProofUrl ? (
+                        <Button variant="link" size="sm" asChild className="p-0 h-auto">
+                          <Link href={company.companyProofUrl} target="_blank" rel="noopener noreferrer">Company</Link>
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">N/A</span>
+                      )}
+                      {company.personalIdUrl ? (
+                        <Button variant="link" size="sm" asChild className="p-0 h-auto">
+                          <Link href={company.personalIdUrl} target="_blank" rel="noopener noreferrer">Personal ID</Link>
+                        </Button>
+                      ) : null}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Badge variant={company.verified ? 'default' : 'secondary'}>
                       {company.verified ? 'Approved' : 'Pending'}
@@ -88,3 +104,5 @@ export default function AdminCompaniesPage() {
     </Card>
   );
 }
+
+    
