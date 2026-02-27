@@ -63,9 +63,11 @@ export type Job = {
 export type Application = {
   id: string;
   jobId: string;
+  jobTitle: string;
   studentId: string;
   studentName: string;
   companyId: string;
+  companyName: string;
   status: 'applied' | 'shortlisted' | 'hired' | 'rejected';
   appliedAt: any;
 };

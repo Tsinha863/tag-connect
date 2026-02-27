@@ -49,7 +49,12 @@ export default function JobDetailsPage() {
             router.push('/login');
             return;
         }
-        if (user.role !== 'student' || !job) {
+        if (!job) return;
+
+        // A temp fix to get role from user object if it exists. 
+        // In a real app, this should be handled more robustly via custom claims or a profile fetch.
+        const userRole = (user as any).role;
+        if (userRole !== 'student') {
             toast({ variant: 'destructive', title: 'Cannot Apply', description: 'Only students can apply for jobs.' });
             return;
         }
@@ -60,9 +65,11 @@ export default function JobDetailsPage() {
         const applicationData = {
             id: applicationId,
             jobId: job.id,
+            jobTitle: job.title,
             studentId: user.uid,
             studentName: user.displayName || 'N/A',
             companyId: job.companyId,
+            companyName: job.companyName,
             status: 'applied',
             appliedAt: serverTimestamp(),
         };
@@ -110,7 +117,7 @@ export default function JobDetailsPage() {
             <div className="container py-10 text-center">
                 <h2 className="text-2xl font-bold">Job not found</h2>
                 <p className="text-muted-foreground">The job you are looking for might have been removed or the link is incorrect.</p>
-                <Button asChild className="mt-4"><Link href="/">Go Home</Link></Button>
+                <Button asChild className="mt-4"><Link href="/jobs">Go to Jobs</Link></Button>
             </div>
         );
     }

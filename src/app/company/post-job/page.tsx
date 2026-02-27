@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser, useFirestore, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { useUser, useFirestore, useDoc, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import type { CompanyProfile } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const jobSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -44,6 +46,12 @@ export default function PostJobPage() {
     const router = useRouter();
     const { toast } = useToast();
 
+    const companyProfileRef = useMemoFirebase(() => {
+      if (!user) return null;
+      return doc(firestore, 'companyProfiles', user.uid);
+    }, [firestore, user]);
+    const { data: companyProfile, isLoading: isProfileLoading } = useDoc<CompanyProfile>(companyProfileRef);
+
     const form = useForm<z.infer<typeof jobSchema>>({
         resolver: zodResolver(jobSchema),
         defaultValues: {
@@ -58,8 +66,8 @@ export default function PostJobPage() {
     });
 
     const onSubmit = (values: z.infer<typeof jobSchema>) => {
-        if (!user) {
-            toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in as a company to post a job.' });
+        if (!user || !companyProfile) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not find company profile. You must be logged in as a company to post a job.' });
             return;
         }
 
@@ -70,6 +78,7 @@ export default function PostJobPage() {
         const newJobData = {
             id: jobId,
             companyId: user.uid,
+            companyName: companyProfile.companyName,
             title: values.title,
             slug: `${slug}-${jobId.substring(0, 6)}`,
             description: values.description,
@@ -81,7 +90,7 @@ export default function PostJobPage() {
             location: values.location,
             jobType: values.jobType,
             status: 'open',
-            searchKeywords: [values.title, values.location, ...skillsArray].map(k => k.toLowerCase()),
+            searchKeywords: [values.title, values.location, ...skillsArray, companyProfile.companyName].map(k => k.toLowerCase()),
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         };
@@ -102,6 +111,22 @@ export default function PostJobPage() {
         toast({ title: 'Job Posted', description: 'Your job listing is now being created.' });
         router.push('/company/dashboard');
     };
+
+    if (isProfileLoading) {
+        return (
+            <div className="container py-10">
+                <Card className="max-w-4xl mx-auto">
+                    <CardHeader>
+                        <CardTitle>Post a New Job</CardTitle>
+                        <CardDescription>Fill out the details below to find your next great hire.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-96 w-full" />
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="container py-10">

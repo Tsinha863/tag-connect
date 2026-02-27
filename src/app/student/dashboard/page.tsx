@@ -118,8 +118,8 @@ export default function StudentDashboardPage() {
               {applications && applications.length > 0 ? (
                 applications.map((app) => (
                   <TableRow key={app.id}>
-                    <TableCell className="font-medium">Job Title Placeholder</TableCell>
-                    <TableCell>Company Placeholder</TableCell>
+                    <TableCell className="font-medium">{app.jobTitle}</TableCell>
+                    <TableCell>{app.companyName}</TableCell>
                     <TableCell>{app.appliedAt ? new Date(app.appliedAt.seconds * 1000).toLocaleDateString() : 'N/A'}</TableCell>
                     <TableCell className="text-right">
                       <Badge variant={app.status === 'shortlisted' || app.status === 'hired' ? 'default' : 'secondary'}>
@@ -130,7 +130,7 @@ export default function StudentDashboardPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center">You haven&apos;t applied to any jobs yet.</TableCell>
+                  <TableCell colSpan={4} className="text-center h-24">You haven&apos;t applied to any jobs yet.</TableCell>
                 </TableRow>
               )}
             </TableBody>
