@@ -89,12 +89,14 @@ export type Placement = {
   commissionAmount: number;
   joiningDate: any;
   createdAt: any;
+  status: 'pending_invoice' | 'invoiced' | 'paid';
 };
 
 export type Inquiry = {
   id: string;
   name: string;
   email: string;
+  subject: string;
   phone: string;
   message: string;
   createdAt: any;

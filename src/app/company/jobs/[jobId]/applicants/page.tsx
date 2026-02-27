@@ -48,7 +48,7 @@ function ApplicantRow({ application }: { application: Application & { id: string
                     const commissionPercent = 8.33; 
                     const commissionAmount = salary * (commissionPercent / 100);
 
-                    const placementData = {
+                    const placementData: Omit<Placement, 'joiningDate' | 'createdAt'> & { joiningDate: any, createdAt: any } = {
                         id: placementId,
                         studentId: application.studentId,
                         companyId: application.companyId,
@@ -61,6 +61,7 @@ function ApplicantRow({ application }: { application: Application & { id: string
                         commissionAmount: commissionAmount,
                         joiningDate: serverTimestamp(), // Placeholder, admin can update
                         createdAt: serverTimestamp(),
+                        status: 'pending_invoice',
                     };
                     const placementRef = doc(firestore, 'placements', placementId);
                     await setDoc(placementRef, placementData);
