@@ -15,10 +15,13 @@ function JobRow({ job }: { job: Job & { id: string } }) {
     const firestore = useFirestore();
 
     const applicationsQuery = useMemoFirebase(() => {
+        if (!job) return null;
         return query(collection(firestore, 'applications'), where('jobId', '==', job.id));
     }, [firestore, job.id]);
 
     const { data: applications, isLoading: areApplicationsLoading } = useCollection<Application>(applicationsQuery);
+    
+    const applicantCount = applications?.length ?? 0;
 
     return (
         <TableRow>
@@ -26,11 +29,16 @@ function JobRow({ job }: { job: Job & { id: string } }) {
             <TableCell><Badge variant={job.status === 'open' ? 'default' : 'secondary'}>{job.status}</Badge></TableCell>
             <TableCell>{job.createdAt ? new Date(job.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</TableCell>
             <TableCell className="text-center">
-                {areApplicationsLoading ? <Skeleton className="h-5 w-5 rounded-full" /> : applications?.length ?? 0}
+                {areApplicationsLoading ? <Skeleton className="h-5 w-5 rounded-full" /> : applicantCount}
             </TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right space-x-2">
                 <Button variant="outline" size="sm" asChild>
                     <Link href={`/jobs/${job.slug}`}>View Job</Link>
+                </Button>
+                <Button variant="default" size="sm" asChild>
+                    <Link href={`/company/jobs/${job.id}/applicants`}>
+                        Applicants ({applicantCount})
+                    </Link>
                 </Button>
             </TableCell>
         </TableRow>
