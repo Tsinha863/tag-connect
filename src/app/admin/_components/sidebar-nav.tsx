@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Briefcase, Building2, LayoutDashboard, Users } from 'lucide-react';
+import { Briefcase, Building2, LayoutDashboard, Users, CircleDollarSign } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import {
@@ -16,6 +16,7 @@ const navItems = [
   { href: '/admin/students', label: 'Students', icon: Users },
   { href: '/admin/companies', label: 'Companies', icon: Building2 },
   { href: '/admin/jobs', label: 'Jobs', icon: Briefcase },
+  { href: '/admin/placements', label: 'Placements', icon: CircleDollarSign },
 ];
 
 export function AdminSidebarNav() {

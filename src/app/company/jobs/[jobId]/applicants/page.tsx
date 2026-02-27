@@ -3,8 +3,8 @@
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useDoc, useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
-import { collection, doc, query, where, updateDoc } from 'firebase/firestore';
-import type { Job, Application, StudentProfile } from '@/lib/types';
+import { collection, doc, query, where, updateDoc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import type { Job, Application, StudentProfile, Placement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { MoreHorizontal } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 
 function ApplicantRow({ application }: { application: Application & { id: string } }) {
@@ -28,26 +29,57 @@ function ApplicantRow({ application }: { application: Application & { id: string
     
     const { data: studentProfile, isLoading } = useDoc<StudentProfile>(studentProfileRef);
     
-    const handleStatusChange = (status: 'shortlisted' | 'rejected' | 'hired') => {
+    const handleStatusChange = async (status: 'shortlisted' | 'rejected' | 'hired') => {
         setIsUpdating(true);
         const appRef = doc(firestore, 'applications', application.id);
         
-        updateDoc(appRef, { status })
-            .then(() => {
-                toast({ title: 'Status Updated', description: `Applicant marked as ${status}.` });
-            })
-            .catch((error) => {
-                 const permissionError = new FirestorePermissionError({
-                    path: appRef.path,
-                    operation: 'update',
-                    requestResourceData: { status },
-                });
-                errorEmitter.emit('permission-error', permissionError);
-                 toast({ variant: 'destructive', title: 'Error', description: 'Could not update status. Check permissions.' });
-            })
-            .finally(() => {
-                setIsUpdating(false);
+        try {
+            await updateDoc(appRef, { status });
+
+            if (status === 'hired') {
+                const placementId = uuidv4();
+                const jobRef = doc(firestore, 'jobs', application.jobId);
+                const jobSnap = await getDoc(jobRef);
+
+                if (jobSnap.exists() && studentProfile) {
+                    const job = jobSnap.data() as Job;
+                    const salary = job.salaryMax || job.salaryMin || 0;
+                    // Assuming 8.33% commission as a default, can be edited by admin
+                    const commissionPercent = 8.33; 
+                    const commissionAmount = salary * (commissionPercent / 100);
+
+                    const placementData = {
+                        id: placementId,
+                        studentId: application.studentId,
+                        companyId: application.companyId,
+                        jobId: application.jobId,
+                        studentName: application.studentName,
+                        companyName: job.companyName,
+                        jobTitle: job.title,
+                        salary: salary,
+                        commissionPercent: commissionPercent,
+                        commissionAmount: commissionAmount,
+                        joiningDate: serverTimestamp(), // Placeholder, admin can update
+                        createdAt: serverTimestamp(),
+                    };
+                    const placementRef = doc(firestore, 'placements', placementId);
+                    await setDoc(placementRef, placementData);
+                }
+            }
+            
+            toast({ title: 'Status Updated', description: `Applicant marked as ${status}.` });
+
+        } catch (error) {
+            const permissionError = new FirestorePermissionError({
+                path: appRef.path,
+                operation: 'update',
+                requestResourceData: { status },
             });
+            errorEmitter.emit('permission-error', permissionError);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not update status. Check permissions.' });
+        } finally {
+            setIsUpdating(false);
+        }
     }
 
     if (isLoading) {

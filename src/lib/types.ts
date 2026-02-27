@@ -11,7 +11,9 @@ export type User = {
 };
 
 export type StudentProfile = {
+  id: string;
   uid: string;
+  email: string;
   fullName: string;
   education: string;
   stream: string;
@@ -20,7 +22,7 @@ export type StudentProfile = {
   city: string;
   state: string;
   jobType: 'Full-time' | 'Part-time' | 'Internship';
-  expectedSalary: number;
+  expectedSalary?: number;
   cvUrl?: string;
   verified: boolean;
   profileCompletionPercentage: number;
@@ -29,7 +31,9 @@ export type StudentProfile = {
 };
 
 export type CompanyProfile = {
+  id: string;
   uid: string;
+  email: string;
   companyName: string;
   industry: string;
   location: string;
@@ -77,10 +81,13 @@ export type Placement = {
   studentId: string;
   companyId: string;
   jobId: string;
+  studentName: string;
+  companyName: string;
+  jobTitle: string;
   salary: number;
   commissionPercent: number;
   commissionAmount: number;
-  joiningDate: Date;
+  joiningDate: any;
   createdAt: any;
 };
 

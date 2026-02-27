@@ -51,6 +51,11 @@
           "type": "string",
           "description": "Unique identifier for the StudentProfile entity, also serving as a reference to the UserProfile ID. (Primary Key; Relationship: UserProfile 1:1 StudentProfile)"
         },
+        "email": {
+          "type": "string",
+          "description": "The student's email address, denormalized for easier access in admin panels.",
+          "format": "email"
+        },
         "fullName": {
           "type": "string",
           "description": "The full name of the student or worker, typically matching the UserProfile name."
@@ -118,6 +123,7 @@
       },
       "required": [
         "id",
+        "email",
         "fullName",
         "education",
         "skills",
@@ -140,6 +146,11 @@
         "id": {
           "type": "string",
           "description": "Unique identifier for the CompanyProfile entity, also serving as a reference to the UserProfile ID. (Primary Key; Relationship: UserProfile 1:1 CompanyProfile)"
+        },
+        "email": {
+          "type": "string",
+          "description": "The company representative's email address, denormalized for easier access.",
+          "format": "email"
         },
         "companyName": {
           "type": "string",
@@ -169,6 +180,7 @@
       },
       "required": [
         "id",
+        "email",
         "companyName",
         "industry",
         "location",
@@ -270,8 +282,6 @@
         "skillsRequired",
         "educationRequired",
         "experienceRequired",
-        "salaryMin",
-        "salaryMax",
         "location",
         "jobType",
         "status",
@@ -347,6 +357,18 @@
           "type": "string",
           "description": "Reference to the Job entity for which the placement was made. (Relationship: Job 1:N Placement)"
         },
+        "studentName": {
+          "type": "string",
+          "description": "Denormalized name of the student for easier display."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Denormalized name of the company for easier display."
+        },
+        "jobTitle": {
+          "type": "string",
+          "description": "Denormalized title of the job for easier display."
+        },
         "salary": {
           "type": "number",
           "description": "The agreed annual salary for the placed student/worker."
@@ -375,6 +397,9 @@
         "studentId",
         "companyId",
         "jobId",
+        "studentName",
+        "companyName",
+        "jobTitle",
         "salary",
         "commissionPercent",
         "commissionAmount",

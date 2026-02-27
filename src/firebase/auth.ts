@@ -20,22 +20,22 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
 
   if (!userProfileSnap.exists()) {
     // This is a new user, create a profile.
-    // Since we don't know the role, we can't fully create the profile.
-    // For now, let's create a basic user profile. The app should then guide the user to select a role.
+    // Defaulting to 'student' role. App should guide user to confirm/change role if necessary.
     const newUserProfile = {
       id: user.uid,
       name: user.displayName || 'Anonymous',
       email: user.email!,
       phone: user.phoneNumber || '',
-      role: 'student', // Defaulting to student, user should be able to change this.
+      role: 'student', 
       createdAt: serverTimestamp(),
     };
     await setDoc(userProfileRef, newUserProfile);
     
-    // Create a default student profile
+    // Create a default student profile since it's the default role
     const studentProfileRef = doc(firestore, 'studentProfiles', user.uid);
     await setDoc(studentProfileRef, {
         id: user.uid,
+        email: user.email!,
         fullName: user.displayName || 'Anonymous',
         education: '',
         stream: '',
@@ -46,7 +46,7 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore) {
         jobType: 'Full-time',
         verified: false,
         profileCompletionPercentage: 10,
-        searchKeywords: [],
+        searchKeywords: [(user.displayName || 'Anonymous').toLowerCase(), (user.email || '').toLowerCase()],
         createdAt: serverTimestamp(),
     });
   }
@@ -77,6 +77,7 @@ export async function signUpWithEmail(
     if (role === 'student') {
         const studentProfile = {
             id: user.uid,
+            email: email,
             fullName: fullName,
             education: '',
             stream: '',
@@ -87,14 +88,15 @@ export async function signUpWithEmail(
             jobType: 'Full-time',
             verified: false,
             profileCompletionPercentage: 10,
-            searchKeywords: [],
+            searchKeywords: [fullName.toLowerCase(), email.toLowerCase()],
             createdAt: serverTimestamp(),
         };
         await setDoc(doc(firestore, 'studentProfiles', user.uid), studentProfile);
     } else if (role === 'company') {
         const companyProfile = {
             id: user.uid,
-            companyName: fullName, // Should probably be a separate field. Using fullName for now.
+            email: email,
+            companyName: fullName, // Using fullName for companyName on signup.
             industry: '',
             location: '',
             description: '',

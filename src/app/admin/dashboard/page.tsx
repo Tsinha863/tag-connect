@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Activity,
   ArrowUpRight,
@@ -36,6 +38,10 @@ import {
 } from '@/components/ui/chart';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import type { ChartConfig } from '@/components/ui/chart';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import type { StudentProfile, CompanyProfile, Placement } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const chartData = [
   { month: 'January', commission: 1860 },
@@ -53,58 +59,75 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const recentStudents = [
-  { name: 'Olivia Martin', email: 'olivia.martin@email.com', stream: 'Computer Science', verified: true, avatar: '11' },
-  { name: 'Jackson Lee', email: 'jackson.lee@email.com', stream: 'Mechanical Eng.', verified: false, avatar: '12' },
-  { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', stream: 'Marketing', verified: true, avatar: '13' },
-  { name: 'William Kim', email: 'will@email.com', stream: 'Arts', verified: true, avatar: '14' },
-  { name: 'Sofia Davis', email: 'sofia.davis@email.com', stream: 'Commerce', verified: false, avatar: '15' },
-];
+function StatCard({ title, icon: Icon, value, description, isLoading }: { title: string; icon: React.ElementType; value: string; description: string; isLoading: boolean }) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        {isLoading ? <Skeleton className="h-8 w-24" /> : <div className="text-2xl font-bold">{value}</div>}
+        {!isLoading && <p className="text-xs text-muted-foreground">{description}</p>}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function Dashboard() {
+  const firestore = useFirestore();
+
+  const { data: placements, isLoading: placementsLoading } = useCollection<Placement>(
+    useMemoFirebase(() => collection(firestore, 'placements'), [firestore])
+  );
+  
+  const studentsQuery = useMemoFirebase(() => query(collection(firestore, 'studentProfiles'), orderBy('createdAt', 'desc')), [firestore]);
+  const { data: students, isLoading: studentsLoading } = useCollection<StudentProfile>(studentsQuery);
+  
+  const { data: companies, isLoading: companiesLoading } = useCollection<CompanyProfile>(
+    useMemoFirebase(() => collection(firestore, 'companyProfiles'), [firestore])
+  );
+
+  const isLoading = placementsLoading || studentsLoading || companiesLoading;
+
+  const totalCommission = placements?.reduce((acc, p) => acc + (p.commissionAmount || 0), 0) || 0;
+  const totalStudents = students?.length || 0;
+  const totalCompanies = companies?.length || 0;
+  const totalPlacements = placements?.length || 0;
+
+  const recentStudents = students?.slice(0, 5) || [];
+
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Commission</CardTitle>
-            <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹45,231.89</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Companies</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+19% from last month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Placements</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">+32 since last hour</p>
-          </CardContent>
-        </Card>
+        <StatCard 
+          title="Total Commission" 
+          icon={CircleDollarSign} 
+          value={`₹${totalCommission.toLocaleString()}`} 
+          description="Total earnings from placements."
+          isLoading={isLoading}
+        />
+        <StatCard 
+          title="Total Students" 
+          icon={Users} 
+          value={`+${totalStudents}`}
+          description="Registered student accounts."
+          isLoading={isLoading}
+        />
+        <StatCard 
+          title="Total Companies" 
+          icon={Building2} 
+          value={`+${totalCompanies}`}
+          description="Registered company accounts."
+          isLoading={isLoading}
+        />
+        <StatCard 
+          title="Total Placements" 
+          icon={Briefcase} 
+          value={`+${totalPlacements}`}
+          description="Successful student placements."
+          isLoading={isLoading}
+        />
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
         <Card className="xl:col-span-2">
@@ -141,7 +164,7 @@ export default function Dashboard() {
           <CardHeader className="flex flex-row items-center">
              <div className="grid gap-2">
               <CardTitle>Recent Students</CardTitle>
-              <CardDescription>26 new students signed up this month.</CardDescription>
+              <CardDescription>{totalStudents} total students.</CardDescription>
             </div>
             <Button asChild size="sm" className="ml-auto gap-1">
               <Link href="/admin/students">
@@ -151,14 +174,25 @@ export default function Dashboard() {
             </Button>
           </CardHeader>
           <CardContent className="grid gap-8">
-            {recentStudents.map((student) => (
-              <div key={student.email} className="flex items-center gap-4">
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div className="grid gap-1 flex-1">
+                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                  <Skeleton className="h-6 w-16 rounded-full" />
+                </div>
+              ))
+            ) : recentStudents.map((student) => (
+              <div key={student.id} className="flex items-center gap-4">
               <Avatar className="hidden h-9 w-9 sm:flex">
-                <AvatarImage src={`https://picsum.photos/seed/${student.avatar}/100/100`} alt="Avatar" data-ai-hint="person face" />
-                <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={`https://picsum.photos/seed/${student.id}/100/100`} alt="Avatar" data-ai-hint="person face" />
+                <AvatarFallback>{student.fullName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="grid gap-1">
-                <p className="text-sm font-medium leading-none">{student.name}</p>
+                <p className="text-sm font-medium leading-none">{student.fullName}</p>
                 <p className="text-sm text-muted-foreground">{student.email}</p>
               </div>
               <div className="ml-auto font-medium">
