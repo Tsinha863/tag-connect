@@ -4,7 +4,7 @@ import { useUser, useFirestore } from '@/firebase';
 import { getUserRole } from '@/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { NewtonCradleLoader } from '@/components/loader';
 
 export default function StudentLayout({
   children,
@@ -43,7 +43,7 @@ export default function StudentLayout({
   if (isVerifying || isUserLoading) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-8rem)]">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <NewtonCradleLoader />
       </div>
     );
   }
