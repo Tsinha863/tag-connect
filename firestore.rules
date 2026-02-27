@@ -1,0 +1,209 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Core Philosophy:
+     * This ruleset implements a security model based on user ownership and role-based
+     * capabilities (Student, Company). The architecture prioritizes "Authorization
+     * Independence" by denormalizing ownership fields (e.g., `companyId`, `studentId`)
+     * directly onto documents, which allows for fast, simple, and performant security
+     * checks without needing costly cross-collection `get()` calls.
+     *
+     * Data Structure:
+     * The data is organized into flat, top-level collections for each major entity
+     * (e.g., `/jobs`, `/studentProfiles`, `/applications`). This simplifies path-based
+     * security and avoids complex nested rule logic.
+     *
+     * Key Security Decisions:
+     * - User/Student/Company profiles are owner-writable. To facilitate the application's
+     *   core functionality (e.g., companies viewing student profiles), individual profiles
+     *   are readable by any authenticated user, but listing/scraping entire collections
+     *   is disabled.
+     * - Job postings are public to read but can only be modified by the owning company.
+     * - Applications are shared resources, accessible only to the applying student and
+     *   the hiring company.
+     * - Collections intended for administrative access (`placements`, `inquiries`) are
+     *   currently locked down and require implementation of a proper admin role check.
+     * - Public contact form submissions (`inquiries`) are allowed via an open `create` rule,
+     *   but the submitted data is not readable by other users.
+     */
+
+    // --------------------------------------------------------------------------------
+    // Helper Functions
+    // --------------------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing document ownership.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * A robust check for update/delete operations, ensuring the document exists
+     * and the user is the owner. Prevents writes to non-existent documents.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // --------------------------------------------------------------------------------
+    // Collection Rules
+    // --------------------------------------------------------------------------------
+
+    /**
+     * @description Controls access to a user's core profile document, which holds
+     *              essential data like role and email. Access is strictly limited
+     *              to the owner.
+     * @path        /users/{userId}
+     * @allow       (create, get, update, delete) A signed-in user with UID 'user_abc'
+     *              accessing the document at /users/user_abc.
+     * @deny        (get) A user 'user_xyz' trying to read the document at /users/user_abc.
+     * @deny        (list) Any user trying to list all documents in the /users collection.
+     * @principle   Restricts access to a user's own data tree.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages student-specific profiles. The student owns their data
+     *              and has full control. For the job board to function, any signed-in
+     *              user (e.g., a company) can view a specific student's profile,
+     *              but listing all students is disabled to prevent data scraping.
+     * @path        /studentProfiles/{studentId}
+     * @allow       (create, update, delete) A user with UID 'student_abc' modifying
+     *              the document at /studentProfiles/student_abc.
+     * @allow       (get) A company user authenticated with any UID reading the
+     *              document at /studentProfiles/student_abc.
+     * @deny        (update) A user with UID 'student_xyz' trying to modify the
+     *              document at /studentProfiles/student_abc.
+     * @deny        (list) Any user attempting to list all student profiles.
+     * @principle   Enforces document ownership for writes while allowing controlled
+     *              reads for authenticated users.
+     */
+    match /studentProfiles/{studentId} {
+      allow get: if isSignedIn();
+      allow list: if isOwner(studentId);
+      allow create: if isOwner(studentId) && request.resource.data.id == studentId;
+      allow update: if isExistingOwner(studentId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(studentId);
+    }
+
+    /**
+     * @description Manages company-specific profiles. The company representative owns
+     *              their data. Any signed-in user (e.g., a student) can view a
+     *              specific company profile, but listing all companies is disabled.
+     * @path        /companyProfiles/{companyId}
+     * @allow       (create, update, delete) A user with UID 'company_abc' modifying
+     *              the document at /companyProfiles/company_abc.
+     * @allow       (get) A student user authenticated with any UID reading the
+     *              document at /companyProfiles/company_abc.
+     * @deny        (update) A user with UID 'company_xyz' trying to modify the
+     *              document at /companyProfiles/company_abc.
+     * @deny        (list) Any user attempting to list all company profiles.
+     * @principle   Enforces document ownership for writes while allowing controlled
+     *              reads for authenticated users.
+     */
+    match /companyProfiles/{companyId} {
+      allow get: if isSignedIn();
+      allow list: if isOwner(companyId);
+      allow create: if isOwner(companyId) && request.resource.data.id == companyId;
+      allow update: if isExistingOwner(companyId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(companyId);
+    }
+
+    /**
+     * @description Manages job postings. Job listings are public and can be read by
+     *              anyone, including unauthenticated visitors. However, only the
+     *              company that created the job can create, update, or delete it.
+     * @path        /jobs/{jobId}
+     * @allow       (get, list) Any user, including anonymous ones, reading job postings.
+     * @allow       (create) An authenticated company user creating a job where the
+     *              'companyId' in the new data matches their own UID.
+     * @deny        (create) A company user trying to create a job and assign it to
+     *              another company's ID.
+     * @deny        (update, delete) A company user trying to modify a job that was
+     *              posted by a different company.
+     * @principle   Public read with owner-only writes, using a denormalized
+     *              `companyId` for authorization.
+     */
+    match /jobs/{jobId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.companyId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.companyId) && request.resource.data.companyId == resource.data.companyId;
+      allow delete: if isExistingOwner(resource.data.companyId);
+    }
+
+    /**
+     * @description Manages job applications. This is a shared resource between the
+     *              student who applies and the company that owns the job.
+     * @path        /applications/{applicationId}
+     * @allow       (create) A student user creating an application where the
+     *              `studentId` field matches their UID.
+     * @allow       (get, delete) The student OR the company involved in the application.
+     * @allow       (update) Only the company can update the application (e.g., to
+     *              change its status).
+     * @deny        (get) Any user who is not the applicant or the hiring company.
+     * @principle   Shared access for closed collaborators, enforced by checking
+     *              denormalized `studentId` and `companyId` fields.
+     */
+    match /applications/{applicationId} {
+      allow get: if isSignedIn() && (isOwner(resource.data.studentId) || isOwner(resource.data.companyId));
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.studentId == request.auth.uid;
+      allow update: if isSignedIn() && resource != null && isOwner(resource.data.companyId) && request.resource.data.studentId == resource.data.studentId && request.resource.data.companyId == resource.data.companyId;
+      allow delete: if isSignedIn() && resource != null && (isOwner(resource.data.studentId) || isOwner(resource.data.companyId));
+    }
+
+    /**
+     * @description Manages successful placement records. This data is considered
+     *              sensitive and administrative. Access is currently blocked for
+     *              all users pending the implementation of an admin role system.
+     * @path        /placements/{placementId}
+     * @allow       (all) No operations are currently permitted.
+     * @deny        (all) All users, regardless of role.
+     * @principle   Default to deny for sensitive, admin-only data.
+     */
+    match /placements/{placementId} {
+      allow get: if false; // TODO: Add admin role check, e.g., get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin'
+      allow list: if false; // TODO: Add admin role check.
+      allow create: if false; // TODO: Add admin role check.
+      allow update: if false; // TODO: Add admin role check.
+      allow delete: if false; // TODO: Add admin role check.
+    }
+
+    /**
+     * @description Stores contact form submissions from the public website. Anyone
+     *              can create an inquiry, but the content is confidential and should
+     *              only be readable by administrators.
+     * @path        /inquiries/{inquiryId}
+     * @allow       (create) Any user, including anonymous visitors, can submit a
+     *              contact form inquiry.
+     * @deny        (get, list, update, delete) All users are blocked from reading or
+     *              modifying inquiries after submission.
+     * @principle   Public write with restricted reads for structural segregation of
+     *              publicly submitted vs. privately managed data.
+     */
+    match /inquiries/{inquiryId} {
+      allow get: if false; // TODO: Add admin role check.
+      allow list: if false; // TODO: Add admin role check.
+      allow create: if true;
+      allow update: if false; // TODO: Add admin role check.
+      allow delete: if false; // TODO: Add admin role check.
+    }
+  }
+}

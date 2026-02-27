@@ -1,0 +1,551 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's base profile, linked to Firebase Authentication, containing core identification and role information within the TAG MEDIA platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity, corresponding to the Firebase Authentication UID. (Primary Key)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The user's phone number."
+        },
+        "role": {
+          "type": "string",
+          "description": "The assigned role of the user (e.g., 'StudentWorker', 'Company', 'Admin')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user profile was first created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "role",
+        "createdAt"
+      ]
+    },
+    "StudentProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StudentProfile",
+      "type": "object",
+      "description": "Detailed profile information for a student or skilled/unskilled worker, extending the base UserProfile with educational, experiential, and preference data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the StudentProfile entity, also serving as a reference to the UserProfile ID. (Primary Key; Relationship: UserProfile 1:1 StudentProfile)"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the student or worker, typically matching the UserProfile name."
+        },
+        "education": {
+          "type": "string",
+          "description": "Highest level of education attained by the student/worker (e.g., 'High School', 'Bachelor's Degree', 'Master's Degree')."
+        },
+        "stream": {
+          "type": "string",
+          "description": "Academic stream or field of study (e.g., 'Computer Science', 'Mechanical Engineering', 'Arts')."
+        },
+        "skills": {
+          "type": "array",
+          "description": "A list of skills possessed by the student/worker.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "experienceYears": {
+          "type": "number",
+          "description": "Number of years of relevant work experience."
+        },
+        "city": {
+          "type": "string",
+          "description": "The current city of residence for the student/worker."
+        },
+        "state": {
+          "type": "string",
+          "description": "The current state of residence for the student/worker."
+        },
+        "jobType": {
+          "type": "string",
+          "description": "The preferred type of job (e.g., 'Skilled', 'Unskilled', 'Full-time', 'Part-time')."
+        },
+        "expectedSalary": {
+          "type": "number",
+          "description": "The expected annual salary of the student/worker."
+        },
+        "cvUrl": {
+          "type": "string",
+          "description": "URL to the uploaded Curriculum Vitae (CV) or resume, stored in Firebase Storage.",
+          "format": "uri"
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Indicates whether the student's profile has been verified by an admin."
+        },
+        "profileCompletionPercentage": {
+          "type": "number",
+          "description": "A calculated percentage indicating the completeness of the student's profile, used for UI feedback."
+        },
+        "searchKeywords": {
+          "type": "array",
+          "description": "An array of keywords derived from the profile data, optimized for search and filtering functionality.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the student profile was first created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "fullName",
+        "education",
+        "skills",
+        "experienceYears",
+        "city",
+        "state",
+        "jobType",
+        "verified",
+        "profileCompletionPercentage",
+        "searchKeywords",
+        "createdAt"
+      ]
+    },
+    "CompanyProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CompanyProfile",
+      "type": "object",
+      "description": "Detailed profile information for a hiring company, extending the base UserProfile with company-specific details.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the CompanyProfile entity, also serving as a reference to the UserProfile ID. (Primary Key; Relationship: UserProfile 1:1 CompanyProfile)"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "The official name of the company."
+        },
+        "industry": {
+          "type": "string",
+          "description": "The industry sector in which the company operates."
+        },
+        "location": {
+          "type": "string",
+          "description": "The primary operational location of the company."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the company's business and mission."
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Indicates whether the company profile has been verified and approved by an admin."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the company profile was first created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "companyName",
+        "industry",
+        "location",
+        "description",
+        "verified",
+        "createdAt"
+      ]
+    },
+    "Job": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Job",
+      "type": "object",
+      "description": "A job posting created by a company, detailing requirements, compensation, and other job-specific attributes.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Job entity. (Primary Key)"
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Reference to the CompanyProfile entity that posted this job. (Relationship: CompanyProfile 1:N Job)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the job position."
+        },
+        "slug": {
+          "type": "string",
+          "description": "An SEO-friendly URL slug generated from the job title, ensuring clean and readable URLs."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the job responsibilities and requirements."
+        },
+        "skillsRequired": {
+          "type": "array",
+          "description": "A list of skills required for candidates applying to this job.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "educationRequired": {
+          "type": "string",
+          "description": "The minimum educational qualification required for the job."
+        },
+        "experienceRequired": {
+          "type": "number",
+          "description": "The minimum number of years of relevant experience required for the job."
+        },
+        "salaryMin": {
+          "type": "number",
+          "description": "The minimum annual salary offered for the job."
+        },
+        "salaryMax": {
+          "type": "number",
+          "description": "The maximum annual salary offered for the job."
+        },
+        "location": {
+          "type": "string",
+          "description": "The geographical location where the job is based."
+        },
+        "jobType": {
+          "type": "string",
+          "description": "The type of employment (e.g., 'Full-time', 'Part-time', 'Contract')."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the job posting (e.g., 'open', 'closed', 'draft')."
+        },
+        "searchKeywords": {
+          "type": "array",
+          "description": "Keywords extracted from the job description and title, used for optimized search and SEO.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the job posting was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the job posting was last updated.",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the job posting will automatically expire and close.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "companyId",
+        "title",
+        "slug",
+        "description",
+        "skillsRequired",
+        "educationRequired",
+        "experienceRequired",
+        "salaryMin",
+        "salaryMax",
+        "location",
+        "jobType",
+        "status",
+        "searchKeywords",
+        "createdAt"
+      ]
+    },
+    "Application": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Application",
+      "type": "object",
+      "description": "Records a student's application to a specific job posted by a company, tracking its status.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Application entity. (Primary Key)"
+        },
+        "jobId": {
+          "type": "string",
+          "description": "Reference to the Job entity that the student applied to. (Relationship: Job 1:N Application)"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the StudentProfile entity who submitted the application. (Relationship: StudentProfile 1:N Application)"
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Reference to the CompanyProfile entity that posted the job, derived from the Job. (Relationship: CompanyProfile 1:N Application)"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the job application (e.g., 'pending', 'shortlisted', 'rejected', 'hired')."
+        },
+        "appliedAt": {
+          "type": "string",
+          "description": "Timestamp when the application was submitted by the student.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the application status was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "jobId",
+        "studentId",
+        "companyId",
+        "status",
+        "appliedAt"
+      ]
+    },
+    "Placement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Placement",
+      "type": "object",
+      "description": "Records a successful placement of a student/worker with a company facilitated by TAG MEDIA, including financial details.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Placement entity. (Primary Key)"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the StudentProfile entity that was placed. (Relationship: StudentProfile 1:N Placement)"
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Reference to the CompanyProfile entity where the student was placed. (Relationship: CompanyProfile 1:N Placement)"
+        },
+        "jobId": {
+          "type": "string",
+          "description": "Reference to the Job entity for which the placement was made. (Relationship: Job 1:N Placement)"
+        },
+        "salary": {
+          "type": "number",
+          "description": "The agreed annual salary for the placed student/worker."
+        },
+        "commissionPercent": {
+          "type": "number",
+          "description": "The percentage of commission earned by TAG MEDIA for this placement."
+        },
+        "commissionAmount": {
+          "type": "number",
+          "description": "The calculated commission amount earned by TAG MEDIA based on salary and commission percent."
+        },
+        "joiningDate": {
+          "type": "string",
+          "description": "The date when the placed student/worker is expected to join the company.",
+          "format": "date"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the placement record was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "companyId",
+        "jobId",
+        "salary",
+        "commissionPercent",
+        "commissionAmount",
+        "joiningDate",
+        "createdAt"
+      ]
+    },
+    "Inquiry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Inquiry",
+      "type": "object",
+      "description": "Stores messages submitted through the contact form on the TAG MEDIA landing page, for administrative follow-up.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Inquiry entity. (Primary Key)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The full name of the person submitting the inquiry."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the person submitting the inquiry.",
+          "format": "email"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject line of the inquiry message."
+        },
+        "message": {
+          "type": "string",
+          "description": "The detailed message or query from the user."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the inquiry was submitted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "subject",
+        "message",
+        "createdAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores core user profile data, including name, email, phone, and most importantly, the user's role. The 'userId' parameter corresponds directly to the Firebase Authentication UID. This document's 'role' field is critical for database authorization (DBAC).",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Authentication User ID (UID) of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/studentProfiles/{studentId}",
+        "definition": {
+          "entityName": "StudentProfile",
+          "schema": {
+            "$ref": "#/backend/entities/StudentProfile"
+          },
+          "description": "Contains detailed profile information for students or skilled/unskilled workers. 'studentId' corresponds to the Firebase Auth UID. Includes denormalized 'id' matching 'studentId' for authorization independence, and 'searchKeywords' for query-based access patterns (QAPs).",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "The Firebase Authentication User ID (UID) of the student/worker."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/companyProfiles/{companyId}",
+        "definition": {
+          "entityName": "CompanyProfile",
+          "schema": {
+            "$ref": "#/backend/entities/CompanyProfile"
+          },
+          "description": "Contains detailed profile information for hiring companies. 'companyId' corresponds to the Firebase Auth UID. Includes denormalized 'id' matching 'companyId' for authorization independence.",
+          "params": [
+            {
+              "name": "companyId",
+              "description": "The Firebase Authentication User ID (UID) of the company representative."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/jobs/{jobId}",
+        "definition": {
+          "entityName": "Job",
+          "schema": {
+            "$ref": "#/backend/entities/Job"
+          },
+          "description": "Stores job postings created by companies. Includes denormalized 'companyId' for authorization independence, allowing direct ownership checks in security rules. The 'status' field enables structural segregation for public/private job listings (QAPs). 'slug' and 'searchKeywords' support SEO and efficient filtering.",
+          "params": [
+            {
+              "name": "jobId",
+              "description": "The unique identifier for the job posting."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/applications/{applicationId}",
+        "definition": {
+          "entityName": "Application",
+          "schema": {
+            "$ref": "#/backend/entities/Application"
+          },
+          "description": "Records a student's application to a specific job. Includes denormalized 'studentId' and 'companyId' for authorization independence, allowing both students and companies to manage relevant applications directly without 'get()' operations in rules (QAPs). 'status' field enables explicit state modeling.",
+          "params": [
+            {
+              "name": "applicationId",
+              "description": "The unique identifier for the job application."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/placements/{placementId}",
+        "definition": {
+          "entityName": "Placement",
+          "schema": {
+            "$ref": "#/backend/entities/Placement"
+          },
+          "description": "Records successful student placements. Includes denormalized 'studentId', 'companyId', and 'jobId' for authorization independence. Access is primarily restricted to Admin, with potential read access for the involved student and company.",
+          "params": [
+            {
+              "name": "placementId",
+              "description": "The unique identifier for the placement record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/inquiries/{inquiryId}",
+        "definition": {
+          "entityName": "Inquiry",
+          "schema": {
+            "$ref": "#/backend/entities/Inquiry"
+          },
+          "description": "Stores messages submitted through the contact form. Designed for anonymous write access and admin-only read access, reflecting a clear structural segregation of data based on access patterns.",
+          "params": [
+            {
+              "name": "inquiryId",
+              "description": "The unique identifier for the inquiry message."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed following the core principles of Authorization Independence, Structural Segregation, and consistent Access Modeling to ensure security, scalability, and debuggability. \n\n**Authorization Independence:**\n*   **UserProfile:** Stored at `/users/{userId}`, where `userId` directly corresponds to `request.auth.uid`. The user's `role` is stored within this document, enabling direct role-based authorization checks (`resource.data.role`) without requiring cross-collection lookups.\n*   **StudentProfile & CompanyProfile:** These are top-level collections (`/studentProfiles/{studentId}` and `/companyProfiles/{companyId}`). The `id` field within each document explicitly matches the `studentId` or `companyId` (which is the Firebase `uid`), ensuring direct ownership checks (`request.auth.uid == studentId`) without relying on a parent `user` document's attributes. This allows atomic creation/updates.\n*   **Job:** Stored at `/jobs/{jobId}`. Each `Job` document explicitly includes `companyId`. This denormalization means that rules governing job modifications or deletions can directly verify `request.auth.uid == resource.data.companyId`, avoiding any `get()` operations to the `/companyProfiles` collection.\n*   **Application:** Stored at `/applications/{applicationId}`. Each `Application` document denormalizes both `studentId` and `companyId`. This is critical for authorization independence, allowing students to manage their own applications (`request.auth.uid == resource.data.studentId`) and companies to manage applications for their jobs (`request.auth.uid == resource.data.companyId`) without costly `get()` calls to `Job` or `UserProfile` documents in security rules. The `companyId` is denormalized directly from the `Job` entity at the time of application creation.\n*   **Placement:** Stored at `/placements/{placementId}`. Similar to `Application`, `studentId`, `companyId`, and `jobId` are all denormalized within the document. This enables direct authorization checks for admins, or potentially for the involved student/company for read-only access, ensuring independence from parent entities.\n*   **Inquiry:** Stored at `/inquiries/{inquiryId}`. This collection has a simple security posture: anonymous write for creation, admin-only read for management.\n\n**Support for QAPs (Query-Based Access Patterns):**\n*   **Structural Segregation:** The use of `status` fields (e.g., `Job.status`) allows for natural segregation. For example, public job listings can query `/jobs` filtered by `status: 'open'`, enabling efficient `list` operations without needing complex rule-based filtering (rules are not filters). Draft jobs are implicitly private unless explicitly queried by the `companyId` owner.\n*   **Denormalized IDs for efficient querying:** By including `studentId` and `companyId` directly in `Application` documents, students can query `applications` where `studentId == request.auth.uid` to see their own applications. Similarly, companies can query `applications` where `companyId == request.auth.uid` to see applications for their jobs. This allows for efficient, secure, and indexable queries from the client-side.\n*   **Search Keywords:** `StudentProfile.searchKeywords` and `Job.searchKeywords` fields are explicitly included to facilitate efficient full-text search and filtering capabilities, which is a key QAP for a marketplace application.\n\n**Overall, this design minimizes rule complexity by pushing authorization context into the data structure itself through strategic denormalization and structural segregation, making rules robust, atomic, and easy to debug while supporting efficient data retrieval patterns.**"
+  }
+}
