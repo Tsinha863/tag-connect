@@ -1,8 +1,14 @@
+'use client';
+
 import Link from 'next/link';
-import { Menu } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Menu, Loader2 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useUser, useAuth } from '@/firebase';
+import { signOutUser } from '@/firebase/auth';
+import { UserNav } from './user-nav';
 
 const navLinks = [
   { href: '/jobs', label: 'Find Jobs' },
@@ -12,6 +18,15 @@ const navLinks = [
 ];
 
 export function SiteHeader() {
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOutUser(auth);
+    router.push('/');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center">
@@ -28,12 +43,20 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end gap-2">
-          <Button variant="ghost" asChild>
-            <Link href="/login">Log In</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+          {isUserLoading ? (
+            <Loader2 className="h-6 w-6 animate-spin" />
+          ) : user ? (
+            <UserNav />
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/login">Log In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="md:hidden">

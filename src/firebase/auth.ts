@@ -5,6 +5,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 import { Firestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -107,6 +108,7 @@ export async function signUpWithEmail(
 }
 
 export async function getUserRole(firestore: Firestore, userId: string): Promise<string | null> {
+    if (!firestore || !userId) return null;
     const userProfileRef = doc(firestore, 'users', userId);
     const userProfileSnap = await getDoc(userProfileRef);
     if (userProfileSnap.exists()) {
@@ -115,4 +117,6 @@ export async function getUserRole(firestore: Firestore, userId: string): Promise
     return null;
 }
 
-    
+export function signOutUser(auth: Auth) {
+    return signOut(auth);
+}

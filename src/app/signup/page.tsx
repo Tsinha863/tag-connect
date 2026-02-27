@@ -28,6 +28,7 @@ import { Logo } from '@/components/logo';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth, useFirestore } from '@/firebase';
 import { signUpWithEmail, signInWithGoogle, getUserRole } from '@/firebase/auth';
+import { Label } from '@/components/ui/label';
 
 const formSchema = z.object({
     role: z.enum(['student', 'company'], {
@@ -68,7 +69,7 @@ export default function SignupPage() {
         }
     };
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (values: z.infer<typeof formSchema>>) => {
         try {
             const userCredential = await signUpWithEmail(auth, firestore, values);
             await handleRedirect(userCredential.user.uid);
@@ -218,4 +219,3 @@ export default function SignupPage() {
         </div>
     );
 }
-    
