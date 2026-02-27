@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -69,7 +70,7 @@ export default function SignupPage() {
         }
     };
 
-    const onSubmit = async (values: z.infer<typeof formSchema>>) => {
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             const userCredential = await signUpWithEmail(auth, firestore, values);
             await handleRedirect(userCredential.user.uid);
