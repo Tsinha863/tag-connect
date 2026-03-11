@@ -1,34 +1,34 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-image",
-      "description": "A diverse group of professionals in a modern office setting, collaborating.",
-      "imageUrl": "https://images.unsplash.com/photo-1761957358394-a90fdd6420c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsc3xlbnwwfHx8fDE3NzIyMDk3MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "diverse professionals"
+      "id": "hero-image-student",
+      "description": "A young student looking thoughtfully into the distance, with a bright, optimistic background.",
+      "imageUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwbG9va2luZyUyMGZvcndhcmR8ZW58MHx8fHwxNzczNTU0NTEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "student future"
     },
     {
-      "id": "skilled-manpower",
-      "description": "A skilled worker like a software engineer or a technician working on a complex task.",
-      "imageUrl": "https://images.unsplash.com/photo-1584549239925-5554aa6b9183?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxza2lsbGVkJTIwd29ya2VyfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "skilled worker"
+      "id": "job-matching",
+      "description": "A compass pointing towards a goal on a map, symbolizing career direction.",
+      "imageUrl": "https://images.unsplash.com/photo-1533158323253-fac3914a2b6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjYXJlZXIlMjBwYXRoJTIwY29tcGFzc3xlbnwwfHx8fDE3NzM1NTQ2NTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "career path"
     },
     {
-      "id": "unskilled-labor",
-      "description": "A group of construction or warehouse workers.",
-      "imageUrl": "https://images.unsplash.com/photo-1586528116691-012ff3ac0fec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXJlaG91c2UlMjB3b3JrZXJzfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "warehouse workers"
+      "id": "skill-development",
+      "description": "A person watering a small plant that is growing, symbolizing skill development.",
+      "imageUrl": "https://images.unsplash.com/photo-1456086272160-b28b0645b271?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwbGFudJTIwZ3Jvd3RofGVufDB8fHx8fDE3NzM1NTQ3MzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "skill growth"
     },
     {
-      "id": "campus-recruitment",
-      "description": "A group of students at a university campus career fair.",
-      "imageUrl": "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx1bml2ZXJzaXR5JTIwc3R1ZGVudHN8ZW58MHx8fHwxNzcyMTA3MTc2fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "university students"
-    },
-    {
-      "id": "contract-staffing",
-      "description": "A person signing a contract or shaking hands in a professional setting.",
+      "id": "direct-access",
+      "description": "Two people shaking hands over a table in a professional meeting.",
       "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXNpbmVzcyUyMGhhbmRzaGFrZXxlbnwwfHx8fDE3NzIyMDk3MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "business handshake"
+    },
+    {
+      "id": "why-us-mentor",
+      "description": "An experienced professional mentoring a younger colleague in a bright, modern office.",
+      "imageUrl": "https://images.unsplash.com/photo-1543269865-cbf427effbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtZW50b3IlMjBzdHVkZW50fGVufDB8fHx8fDE3NzM1NTQzOTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mentor student"
     },
     {
       "id": "testimonial-1",
@@ -44,15 +44,9 @@
     },
     {
       "id": "testimonial-3",
-      "description": "A person in a hard hat smiling.",
-      "imageUrl": "https://images.unsplash.com/photo-1632862378103-8248dccb7e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29uc3RydWN0aW9uJTIwd29ya2VyfGVufDB8fHx8MTc3MjIwOTcxMnww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "construction worker"
-    },
-    {
-      "id": "why-us",
-      "description": "A team celebrating success in an office.",
-      "imageUrl": "https://images.unsplash.com/photo-1771924368572-2ba8c7f6c79d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0ZWFtJTIwY2VsZWJyYXRpb258ZW58MHx8fHwxNzcyMjA5NzEzfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "team celebration"
+      "description": "A smiling man in a business casual shirt.",
+      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMG1hbnxlbnwwfHx8fDE3NzM1NTUxMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "young man"
     }
   ]
 }
