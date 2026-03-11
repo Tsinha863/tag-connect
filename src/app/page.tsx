@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BrainCircuit, Building, Handshake, Target, Users, Quote } from 'lucide-react';
+import { ArrowRight, Sparkles, Handshake, Target, HeartHandshake, Quote } from 'lucide-react';
 
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
@@ -17,24 +17,24 @@ const storyImage = PlaceHolderImages.find(p => p.id === 'our-story');
 const whyChooseUsPoints = [
   {
     icon: Target,
-    title: 'Personalized Job Matching',
-    description: 'We connect you with roles that truly match your skills and career aspirations, not just keywords.',
-    featured: true, // This will be the larger card
+    title: 'Precision Matching',
+    description: 'We go beyond keywords. Our team gets to know you and connects you with roles that align with your true skills and long-term career goals.',
+    featured: true,
   },
   {
-    icon: BrainCircuit,
-    title: 'Career-Ready Resources',
-    description: 'From resume workshops to interview prep, we provide the tools to help you stand out.',
+    icon: Sparkles,
+    title: 'Polish Your Potential',
+    description: 'From resume feedback to mock interviews, we provide the resources and expert guidance you need to stand out from the crowd.',
   },
   {
     icon: Handshake,
-    title: 'Direct Access to Companies',
-    description: 'Get your profile directly in front of hiring managers at innovative companies looking for fresh talent.',
+    title: 'Direct Connections',
+    description: 'No more black holes. We get your profile in front of real hiring managers at companies that are actively seeking fresh talent.',
   },
   {
-    icon: Users,
-    title: 'A Supportive Community',
-    description: 'Join a network that guides you on your journey, with free profile reviews and mentorship opportunities.',
+    icon: HeartHandshake,
+    title: 'A Partner in Your Corner',
+    description: 'This is more than a platform. Join a community that offers mentorship, support, and guidance every step of your journey.',
   },
 ];
 
@@ -54,9 +54,9 @@ const howItWorksCompany = [
 ];
 
 const testimonials = [
-    { id: 'testimonial-2', name: 'Priya Singh', role: 'Software Developer Intern, TechCorp', text: "As a student with no industry experience, the job market felt impossible. TAG Connect matched me with an internship that perfectly fit my skills. I'm now learning so much and building my career." },
-    { id: 'testimonial-1', name: 'Ravi Kumar', role: 'Marketing Associate, AdVantage', text: "I wasn't sure how to present my college projects to employers. The profile review service was a game-changer. I landed a full-time role a month after graduating. I'm so grateful for their guidance." },
-    { id: 'testimonial-3', name: 'Sameer Ahmed', role: 'HR Manager, BuildIt Construction', text: 'Finding enthusiastic, reliable young talent is always a challenge. TAG Connect provides a stream of vetted candidates who are eager to learn and grow with our company. It has transformed our entry-level hiring.' },
+    { id: 'testimonial-2', name: 'Anjali Desai', role: 'Engineering Intern, Spark Innovations', text: "The team at TAG didn't just find me a job, they found me a mentor. The internship they placed me in has been the most valuable experience of my education. I'm finally applying what I learned in class to real-world projects." },
+    { id: 'testimonial-1', name: 'Vikram Patel', role: 'Junior Accountant', text: "I uploaded my CV and within a week, I had two interviews lined up with companies I actually wanted to work for. TAG's team helped me prep for the interviews and gave me the confidence I needed to land my first full-time role." },
+    { id: 'testimonial-3', name: 'Meera Sharma', role: 'HR Director, Fusion Logistics', text: "We used to spend weeks sifting through applications for entry-level positions. With TAG Connect, we get a curated list of motivated, pre-vetted candidates. We've hired three people through their platform, and the quality of talent is exceptional. It's been a huge time-saver for our HR department." },
 ];
 
 
@@ -121,11 +121,11 @@ export default function Home() {
                 Born from a simple belief: Potential is everywhere.
               </h2>
               <p className="mt-6 text-lg text-muted-foreground">
-                TAG Connect started with a conversation. We saw brilliant students with incredible drive, but they were struggling to get their foot in the door. On the other side, we saw companies searching for fresh talent but overlooking the vast potential in our local communities.
+                It all started on a local college campus. We saw firsthand how hard it was for bright, ambitious students to get noticed by the right companies. Their potential was immense, but their resumes often got lost in the pile. At the same time, we knew local businesses were desperate for fresh talent but didn't have an easy way to find it.
                 <br/><br/>
-                We knew we had to bridge this gap. Our mission isn't just about filling positions; it's about launching careers and building futures. We're a team dedicated to seeing the person behind the resume and connecting them with a company where they won't just work, but thrive.
+                That's when TAG Connect was born. We're not a faceless corporation; we're a team of mentors and connectors who live and breathe this community. Our mission is simple: to give every student a real shot at a great career and to help companies build their future with the best local talent. We believe in handshakes, not just clicks.
               </p>
-              <p className="mt-6 font-semibold text-muted-foreground">- The TAG Connect Founders</p>
+              <p className="mt-6 font-semibold text-muted-foreground">- From the founders of TAG Connect</p>
             </div>
           </div>
         </div>
