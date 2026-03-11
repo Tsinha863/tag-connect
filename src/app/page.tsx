@@ -132,7 +132,7 @@ export default function Home() {
       </section>
       
       {/* Asymmetric Grid for "Our Promise" */}
-      <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
+      <section className="py-16 bg-muted/50">
         <div className="container">
            <div className="text-center mb-12">
              <h2 className="text-3xl font-bold tracking-tight">Our Promise to You</h2>
@@ -142,7 +142,7 @@ export default function Home() {
            </div>
           <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             {featuredPoint && (
-                <Card className="lg:col-span-2 p-8 bg-primary/5 dark:bg-primary/10 border-primary/20">
+                <Card className="lg:col-span-2 p-8 bg-card transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                      <div className="w-16 h-16 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-6">
                         <featuredPoint.icon className="w-8 h-8" />
                     </div>
@@ -218,7 +218,7 @@ export default function Home() {
       </section>
 
       {/* Masonry layout for Testimonials */}
-      <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
+      <section className="py-16 bg-muted/50">
         <div className="container">
           <h2 className="text-3xl font-bold tracking-tight text-center">Success Stories</h2>
           <p className="mt-2 text-muted-foreground max-w-2xl mx-auto text-center">
@@ -229,7 +229,7 @@ export default function Home() {
               const image = PlaceHolderImages.find(p => p.id === testimonial.id);
               return (
               <div key={testimonial.name} className="break-inside-avoid">
-                <Card className="bg-white dark:bg-background flex flex-col h-full">
+                <Card className="bg-card flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                   <CardContent className="pt-6 flex flex-col flex-grow">
                     <Quote className="w-8 h-8 text-primary/30 mb-4" />
                     <p className="text-muted-foreground italic flex-grow">&quot;{testimonial.text}&quot;</p>
