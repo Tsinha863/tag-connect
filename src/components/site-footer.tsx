@@ -6,17 +6,16 @@ import { Github, Linkedin, Twitter } from 'lucide-react';
 const footerLinks = {
   "For Candidates": [
     { href: "/jobs", label: "Find Jobs" },
+    { href: "/submit-cv", label: "Submit CV" },
     { href: "/signup", label: "Create Profile" },
     { href: "/student/dashboard", label: "My Dashboard" },
   ],
   "For Companies": [
     { href: "/signup", label: "Post a Job" },
-    { href: "/companies", label: "Browse Companies" },
     { href: "/company/dashboard", label: "Company Dashboard" },
+    { href: "/pricing", label: "Pricing" },
   ],
   "Company": [
-    { href: "/about", label: "About Us" },
-    { href: "/contact", label: "Contact" },
     { href: "/admin/dashboard", label: "Admin Login" },
   ],
 };

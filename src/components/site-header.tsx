@@ -12,10 +12,8 @@ import { UserNav } from './user-nav';
 
 const navLinks = [
   { href: '/jobs', label: 'Find Jobs' },
+  { href: '/submit-cv', label: 'Submit CV' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/companies', label: 'Companies' },
-  { href: '/about', label: 'About Us' },
-  { href: '/contact', label: 'Contact Us' },
 ];
 
 export function SiteHeader() {
@@ -85,5 +83,3 @@ export function SiteHeader() {
     </header>
   );
 }
-
-    
