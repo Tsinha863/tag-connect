@@ -192,13 +192,13 @@ export default function Home() {
       <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
         <div className="container">
           <h2 className="text-3xl font-bold tracking-tight text-center">Success Stories</h2>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {testimonials.map((testimonial) => {
               const image = PlaceHolderImages.find(p => p.id === testimonial.id);
               return (
-              <Card key={testimonial.name} className="bg-white dark:bg-background">
-                <CardContent className="pt-6">
-                  <p className="text-muted-foreground italic h-24">&quot;{testimonial.text}&quot;</p>
+              <Card key={testimonial.name} className="bg-white dark:bg-background flex flex-col">
+                <CardContent className="pt-6 flex flex-col flex-grow">
+                  <p className="text-muted-foreground italic flex-grow">&quot;{testimonial.text}&quot;</p>
                   <div className="mt-4 flex items-center gap-4 border-t pt-4">
                     {image && (
                       <Avatar>
