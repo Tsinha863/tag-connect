@@ -1,34 +1,10 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-image-student",
-      "description": "A young student looking thoughtfully into the distance, with a bright, optimistic background.",
-      "imageUrl": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzdHVkZW50JTIwbG9va2luZyUyMGZvcndhcmR8ZW58MHx8fHwxNzczNTU0NTEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "student future"
-    },
-    {
-      "id": "job-matching",
-      "description": "A compass pointing towards a goal on a map, symbolizing career direction.",
-      "imageUrl": "https://images.unsplash.com/photo-1533158323253-fac3914a2b6a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjYXJlZXIlMjBwYXRoJTIwY29tcGFzc3xlbnwwfHx8fDE3NzM1NTQ2NTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "career path"
-    },
-    {
-      "id": "skill-development",
-      "description": "A person watering a small plant that is growing, symbolizing skill development.",
-      "imageUrl": "https://images.unsplash.com/photo-1456086272160-b28b0645b271?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwbGFudJTIwZ3Jvd3RofGVufDB8fHx8fDE3NzM1NTQ3MzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "skill growth"
-    },
-    {
-      "id": "direct-access",
-      "description": "Two people shaking hands over a table in a professional meeting.",
-      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXNpbmVzcyUyMGhhbmRzaGFrZXxlbnwwfHx8fDE3NzIyMDk3MTN8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "business handshake"
-    },
-    {
-      "id": "why-us-mentor",
-      "description": "An experienced professional mentoring a younger colleague in a bright, modern office.",
-      "imageUrl": "https://images.unsplash.com/photo-1543269865-cbf427effbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtZW50b3IlMjBzdHVkZW50fGVufDB8fHx8fDE3NzM1NTQzOTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "mentor student"
+      "id": "hero-split",
+      "description": "A diverse group of young professionals and students collaborating in a bright, modern space.",
+      "imageUrl": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzdHVkZW50cyUyMGNvbGxhYm9yYXRpbmd8ZW58MHx8fHwxNzczNTU0NTEyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "students collaborating"
     },
     {
       "id": "testimonial-1",
