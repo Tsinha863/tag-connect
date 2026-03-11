@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc, serverTimestamp } from 'firebase/firestore';
+import { useUser, useDoc, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,8 +36,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import type { StudentProfile } from '@/lib/types';
-import { useEffect } from 'react';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 
@@ -59,6 +58,7 @@ export default function StudentProfilePage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  const [isUploading, setIsUploading] = useState(false);
 
   const studentProfileRef = useMemoFirebase(() => {
     if (!user) return null;
@@ -103,6 +103,8 @@ export default function StudentProfilePage() {
         toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in to update your profile.' });
         return;
     }
+    setIsUploading(true);
+    toast({ title: 'Updating Profile...', description: 'Please wait while we save your changes.' });
 
     try {
       let cvUrl = studentProfile?.cvUrl || '';
@@ -111,6 +113,7 @@ export default function StudentProfilePage() {
       if (cvFile) {
         if (cvFile.type !== 'application/pdf') {
           toast({ variant: 'destructive', title: 'Invalid File Type', description: 'Please upload a PDF file for your CV.' });
+          setIsUploading(false);
           return;
         }
         toast({ title: 'Uploading CV...', description: 'Please wait.' });
@@ -148,18 +151,36 @@ export default function StudentProfilePage() {
         updatedAt: serverTimestamp(),
       };
 
-      setDocumentNonBlocking(studentProfileRef, updatedProfileData, { merge: true });
-
-      toast({ title: 'Profile Updated', description: 'Your profile has been saved successfully.' });
-      router.push('/student/dashboard');
+      setDoc(studentProfileRef, updatedProfileData, { merge: true })
+        .then(() => {
+          toast({ title: 'Profile Updated', description: 'Your profile has been saved successfully.' });
+          router.push('/student/dashboard');
+        })
+        .catch(error => {
+          const permissionError = new FirestorePermissionError({
+            path: studentProfileRef.path,
+            operation: 'update',
+            requestResourceData: updatedProfileData
+          });
+          errorEmitter.emit('permission-error', permissionError);
+          toast({
+            variant: 'destructive',
+            title: 'Update Failed',
+            description: 'Could not save your profile. Please check your permissions.',
+          });
+        })
+        .finally(() => {
+          setIsUploading(false);
+        });
 
     } catch (error: any) {
       console.error(error);
       toast({
         variant: 'destructive',
         title: 'Update Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: error.message || 'An unexpected error occurred during file upload.',
       });
+      setIsUploading(false);
     }
   };
   
@@ -265,8 +286,8 @@ export default function StudentProfilePage() {
                         </FormItem>
                     )} />
                 </div>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
+              <Button type="submit" disabled={form.formState.isSubmitting || isUploading}>
+                {isUploading || form.formState.isSubmitting ? 'Saving...' : 'Save Changes'}
               </Button>
             </form>
           </Form>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, deleteDoc } from 'firebase/firestore';
 import type { Job } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -27,21 +27,33 @@ export default function AdminJobsPage() {
   const { data: jobs, isLoading } = useCollection<Job>(jobsQuery);
   const { toast } = useToast();
 
-  const handleDelete = async (jobId: string) => {
+  const handleDelete = (jobId: string) => {
     const jobRef = doc(firestore, 'jobs', jobId);
-    try {
-      await deleteDoc(jobRef);
-      toast({
-        title: `Job Deleted`,
-        description: `The job posting has been removed.`,
+    
+    toast({
+      title: `Deletion in Progress`,
+      description: `The job posting is being removed.`,
+    });
+
+    deleteDoc(jobRef)
+      .then(() => {
+        toast({
+          title: `Job Deleted`,
+          description: `The job posting has been removed.`,
+        });
+      })
+      .catch((error: any) => {
+        const permissionError = new FirestorePermissionError({
+          path: jobRef.path,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not delete job.',
+        });
       });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not delete job.',
-      });
-    }
   };
 
   return (

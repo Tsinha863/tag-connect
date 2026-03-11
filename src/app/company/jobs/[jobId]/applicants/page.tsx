@@ -32,55 +32,68 @@ function ApplicantRow({ application }: { application: Application & { id: string
     const handleStatusChange = async (status: 'shortlisted' | 'rejected' | 'hired') => {
         setIsUpdating(true);
         const appRef = doc(firestore, 'applications', application.id);
-        
-        try {
-            await updateDoc(appRef, { status });
+        const updatedData = { status };
 
-            if (status === 'hired') {
-                const placementId = uuidv4();
-                const jobRef = doc(firestore, 'jobs', application.jobId);
-                const jobSnap = await getDoc(jobRef);
+        updateDoc(appRef, updatedData)
+            .then(() => {
+                toast({ title: 'Status Updated', description: `Applicant marked as ${status}.` });
 
-                if (jobSnap.exists() && studentProfile) {
-                    const job = jobSnap.data() as Job;
-                    const salary = job.salaryMax || job.salaryMin || 0;
-                    // Assuming 8.33% commission as a default, can be edited by admin
-                    const commissionPercent = 8.33; 
-                    const commissionAmount = salary * (commissionPercent / 100);
+                if (status === 'hired') {
+                    const jobRef = doc(firestore, 'jobs', application.jobId);
+                    
+                    // This must be awaited as we need the job data
+                    getDoc(jobRef).then(jobSnap => {
+                        if (jobSnap.exists() && studentProfile) {
+                            const job = jobSnap.data() as Job;
+                            const salary = job.salaryMax || job.salaryMin || 0;
+                            // Assuming 8.33% commission as a default, can be edited by admin
+                            const commissionPercent = 8.33; 
+                            const commissionAmount = salary * (commissionPercent / 100);
+                            const placementId = uuidv4();
 
-                    const placementData: Omit<Placement, 'joiningDate' | 'createdAt'> & { joiningDate: any, createdAt: any } = {
-                        id: placementId,
-                        studentId: application.studentId,
-                        companyId: application.companyId,
-                        jobId: application.jobId,
-                        studentName: application.studentName,
-                        companyName: job.companyName,
-                        jobTitle: job.title,
-                        salary: salary,
-                        commissionPercent: commissionPercent,
-                        commissionAmount: commissionAmount,
-                        joiningDate: serverTimestamp(), // Placeholder, admin can update
-                        createdAt: serverTimestamp(),
-                        status: 'pending_invoice',
-                    };
-                    const placementRef = doc(firestore, 'placements', placementId);
-                    await setDoc(placementRef, placementData);
+                            const placementData: Omit<Placement, 'joiningDate' | 'createdAt'> & { joiningDate: any, createdAt: any } = {
+                                id: placementId,
+                                studentId: application.studentId,
+                                companyId: application.companyId,
+                                jobId: application.jobId,
+                                studentName: application.studentName,
+                                companyName: job.companyName,
+                                jobTitle: job.title,
+                                salary: salary,
+                                commissionPercent: commissionPercent,
+                                commissionAmount: commissionAmount,
+                                joiningDate: serverTimestamp(), // Placeholder, admin can update
+                                createdAt: serverTimestamp(),
+                                status: 'pending_invoice',
+                            };
+                            const placementRef = doc(firestore, 'placements', placementId);
+                            
+                            // Non-blocking write for the new placement
+                            setDoc(placementRef, placementData).catch(error => {
+                                const permissionError = new FirestorePermissionError({
+                                    path: placementRef.path,
+                                    operation: 'create',
+                                    requestResourceData: placementData,
+                                });
+                                errorEmitter.emit('permission-error', permissionError);
+                                toast({ variant: 'destructive', title: 'Hiring Error', description: 'Could not create placement record.' });
+                            });
+                        }
+                    });
                 }
-            }
-            
-            toast({ title: 'Status Updated', description: `Applicant marked as ${status}.` });
-
-        } catch (error) {
-            const permissionError = new FirestorePermissionError({
-                path: appRef.path,
-                operation: 'update',
-                requestResourceData: { status },
+            })
+            .catch(error => {
+                const permissionError = new FirestorePermissionError({
+                    path: appRef.path,
+                    operation: 'update',
+                    requestResourceData: updatedData,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+                toast({ variant: 'destructive', title: 'Error', description: 'Could not update status. Check permissions.' });
+            })
+            .finally(() => {
+                setIsUpdating(false);
             });
-            errorEmitter.emit('permission-error', permissionError);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not update status. Check permissions.' });
-        } finally {
-            setIsUpdating(false);
-        }
     }
 
     if (isLoading) {

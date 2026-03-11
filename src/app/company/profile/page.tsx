@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useUser, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { useUser, useDoc, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useForm } from 'react-hook-form';
@@ -85,6 +85,8 @@ export default function CompanyProfilePage() {
     }
 
     setIsUploading(true);
+    toast({ title: 'Updating Profile...', description: 'Please wait while we save your changes.' });
+
     try {
       let { companyProofUrl, personalIdUrl } = companyProfile || {};
 
@@ -113,19 +115,36 @@ export default function CompanyProfilePage() {
         updatedAt: serverTimestamp(),
       };
 
-      await updateDoc(companyProfileRef, updatedProfileData);
+      updateDoc(companyProfileRef, updatedProfileData)
+        .then(() => {
+          toast({ title: 'Profile Updated', description: 'Your profile has been saved successfully.' });
+          router.push('/company/dashboard');
+        })
+        .catch(error => {
+          const permissionError = new FirestorePermissionError({
+            path: companyProfileRef.path,
+            operation: 'update',
+            requestResourceData: updatedProfileData,
+          });
+          errorEmitter.emit('permission-error', permissionError);
+          toast({
+            variant: 'destructive',
+            title: 'Update Failed',
+            description: 'Could not save your profile. Please check your permissions.',
+          });
+        })
+        .finally(() => {
+          setIsUploading(false);
+        });
 
-      toast({ title: 'Profile Updated', description: 'Your profile has been saved successfully.' });
-      router.push('/company/dashboard');
     } catch (error: any) {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Update Failed',
-        description: error.message || 'An unexpected error occurred.',
+        title: 'Upload Failed',
+        description: error.message || 'An unexpected error occurred during file upload.',
       });
-    } finally {
-        setIsUploading(false);
+      setIsUploading(false);
     }
   };
 

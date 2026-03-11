@@ -29,33 +29,39 @@ export function ContactForm() {
         defaultValues: { name: '', email: '', phone: '', subject: '', message: '' },
     });
 
-    const onSubmit = async (values: z.infer<typeof inquirySchema>) => {
-        const inquiryRef = collection(firestore, 'inquiries');
+    const onSubmit = (values: z.infer<typeof inquirySchema>) => {
+        const inquiryColRef = collection(firestore, 'inquiries');
         const inquiryData = {
             ...values,
             createdAt: serverTimestamp(),
         };
 
-        try {
-            await addDoc(inquiryRef, inquiryData);
-            toast({
-                title: 'Inquiry Sent!',
-                description: 'Thank you for your message. We will get back to you shortly.',
-            });
-            form.reset();
-        } catch (error) {
-             const permissionError = new FirestorePermissionError({
-                path: 'inquiries',
-                operation: 'create',
-                requestResourceData: inquiryData,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Could not send your message. Please try again.',
-            });
-        }
+        toast({
+            title: 'Sending Inquiry...',
+            description: 'Please wait.',
+        });
+
+        addDoc(inquiryColRef, inquiryData)
+          .then(() => {
+              toast({
+                  title: 'Inquiry Sent!',
+                  description: 'Thank you for your message. We will get back to you shortly.',
+              });
+              form.reset();
+          })
+          .catch((error) => {
+              const permissionError = new FirestorePermissionError({
+                  path: 'inquiries',
+                  operation: 'create',
+                  requestResourceData: inquiryData,
+              });
+              errorEmitter.emit('permission-error', permissionError);
+              toast({
+                  variant: 'destructive',
+                  title: 'Error',
+                  description: 'Could not send your message. Please try again.',
+              });
+          });
     };
 
     return (

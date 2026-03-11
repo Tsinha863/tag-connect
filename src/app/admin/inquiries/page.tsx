@@ -1,6 +1,6 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, deleteDoc } from 'firebase/firestore';
 import type { Inquiry } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -26,21 +26,33 @@ export default function AdminInquiriesPage() {
   const { data: inquiries, isLoading } = useCollection<Inquiry>(inquiriesQuery);
   const { toast } = useToast();
 
-  const handleDelete = async (inquiryId: string) => {
+  const handleDelete = (inquiryId: string) => {
     const inquiryRef = doc(firestore, 'inquiries', inquiryId);
-    try {
-      await deleteDoc(inquiryRef);
-      toast({
-        title: `Inquiry Deleted`,
-        description: `The message has been removed.`,
+    
+    toast({
+        title: `Deletion in Progress`,
+        description: `The message is being removed.`,
+    });
+
+    deleteDoc(inquiryRef)
+      .then(() => {
+        toast({
+          title: `Inquiry Deleted`,
+          description: `The message has been removed.`,
+        });
+      })
+      .catch((error: any) => {
+        const permissionError = new FirestorePermissionError({
+          path: inquiryRef.path,
+          operation: 'delete',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not delete inquiry.',
+        });
       });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not delete inquiry.',
-      });
-    }
   };
 
   return (

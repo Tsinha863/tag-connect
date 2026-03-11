@@ -3,7 +3,7 @@
 export type UserRole = 'student' | 'company' | 'admin';
 
 export type User = {
-  uid: string;
+  id: string;
   name: string;
   email: string;
   phone?: string;
@@ -13,7 +13,6 @@ export type User = {
 
 export type StudentProfile = {
   id: string;
-  uid: string;
   email: string;
   fullName: string;
   education: string;
@@ -33,7 +32,6 @@ export type StudentProfile = {
 
 export type CompanyProfile = {
   id: string;
-  uid: string;
   email: string;
   companyName: string;
   industry: string;

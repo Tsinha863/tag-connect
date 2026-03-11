@@ -1,6 +1,6 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import type { Placement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,24 +28,38 @@ export default function AdminPlacementsPage() {
   );
   const { toast } = useToast();
 
-  const handleStatusChange = async (
+  const handleStatusChange = (
     placementId: string,
     status: 'pending_invoice' | 'invoiced' | 'paid'
   ) => {
     const placementRef = doc(firestore, 'placements', placementId);
-    try {
-      await updateDoc(placementRef, { status });
-      toast({
-        title: 'Status Updated',
-        description: `Placement status changed to "${status}".`,
+    const updatedData = { status };
+
+    toast({
+      title: 'Status Update in Progress...',
+      description: `Attempting to change status to "${status}".`,
+    });
+
+    updateDoc(placementRef, updatedData)
+      .then(() => {
+        toast({
+          title: 'Status Updated',
+          description: `Placement status changed to "${status}".`,
+        });
+      })
+      .catch((error: any) => {
+        const permissionError = new FirestorePermissionError({
+          path: placementRef.path,
+          operation: 'update',
+          requestResourceData: updatedData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not update placement status.',
+        });
       });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not update placement status.',
-      });
-    }
   };
 
   return (

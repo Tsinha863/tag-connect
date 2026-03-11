@@ -1,6 +1,6 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import type { StudentProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -16,21 +16,35 @@ export default function AdminStudentsPage() {
     const { data: students, isLoading } = useCollection<StudentProfile>(studentsQuery);
     const { toast } = useToast();
 
-    const handleVerify = async (studentId: string, isVerified: boolean) => {
+    const handleVerify = (studentId: string, isVerified: boolean) => {
         const studentRef = doc(firestore, 'studentProfiles', studentId);
-        try {
-            await updateDoc(studentRef, { verified: !isVerified });
-            toast({
-                title: `Student ${isVerified ? 'Un-verified' : 'Verified'}`,
-                description: `The student profile has been updated.`,
+        const updatedData = { verified: !isVerified };
+
+        toast({
+            title: `Verification in Progress...`,
+            description: `Updating the student profile.`,
+        });
+
+        updateDoc(studentRef, updatedData)
+            .then(() => {
+                toast({
+                    title: `Student ${isVerified ? 'Un-verified' : 'Verified'}`,
+                    description: `The student profile has been updated.`,
+                });
+            })
+            .catch((error: any) => {
+                const permissionError = new FirestorePermissionError({
+                    path: studentRef.path,
+                    operation: 'update',
+                    requestResourceData: updatedData,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+                toast({
+                    variant: 'destructive',
+                    title: 'Error',
+                    description: 'Could not update student status.',
+                });
             });
-        } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Could not update student status.',
-            });
-        }
     };
 
     return (

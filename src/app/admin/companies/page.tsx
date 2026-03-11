@@ -1,6 +1,6 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import type { CompanyProfile } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -17,21 +17,35 @@ export default function AdminCompaniesPage() {
   const { data: companies, isLoading } = useCollection<CompanyProfile>(companiesQuery);
   const { toast } = useToast();
 
-  const handleVerify = async (companyId: string, isVerified: boolean) => {
+  const handleVerify = (companyId: string, isVerified: boolean) => {
     const companyRef = doc(firestore, 'companyProfiles', companyId);
-    try {
-      await updateDoc(companyRef, { verified: !isVerified });
-      toast({
-        title: `Company ${isVerified ? 'Un-approved' : 'Approved'}`,
-        description: `The company profile has been updated.`,
+    const updatedData = { verified: !isVerified };
+
+    toast({
+      title: `Company ${isVerified ? 'Un-approval' : 'Approval'} In Progress...`,
+      description: `Updating the company profile.`,
+    });
+
+    updateDoc(companyRef, updatedData)
+      .then(() => {
+        toast({
+          title: `Company ${isVerified ? 'Un-approved' : 'Approved'}`,
+          description: `The company profile has been updated.`,
+        });
+      })
+      .catch((error: any) => {
+        const permissionError = new FirestorePermissionError({
+          path: companyRef.path,
+          operation: 'update',
+          requestResourceData: updatedData
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Could not update company status.',
+        });
       });
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not update company status.',
-      });
-    }
   };
 
   return (
@@ -104,5 +118,3 @@ export default function AdminCompaniesPage() {
     </Card>
   );
 }
-
-    
