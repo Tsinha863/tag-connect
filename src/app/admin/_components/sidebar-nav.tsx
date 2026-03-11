@@ -9,6 +9,7 @@ import {
   Users,
   CircleDollarSign,
   Receipt,
+  Mail,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -25,6 +26,7 @@ const navItems = [
   { href: '/admin/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/admin/placements', label: 'Placements', icon: CircleDollarSign },
   { href: '/admin/invoices', label: 'Invoices', icon: Receipt },
+  { href: '/admin/inquiries', label: 'Inquiries', icon: Mail },
 ];
 
 export function AdminSidebarNav() {

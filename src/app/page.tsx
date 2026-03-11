@@ -6,8 +6,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { ContactForm } from '@/components/contact-form';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
 const whyUsImage = PlaceHolderImages.find(p => p.id === 'why-us');
@@ -225,24 +224,7 @@ export default function Home() {
 
       <section className="py-16 bg-background">
         <div className="container">
-          <Card className="max-w-4xl mx-auto shadow-xl">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl">Contact Us</CardTitle>
-              <CardDescription>Have a question or need a custom staffing solution? Get in touch with us.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input placeholder="Your Name" />
-                <Input type="email" placeholder="Your Email" />
-                <Input placeholder="Phone Number" />
-                <Input placeholder="Subject" />
-                <Textarea placeholder="Your Message" className="md:col-span-2" rows={5} />
-                <div className="md:col-span-2 flex justify-center">
-                  <Button size="lg">Send Message</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          <ContactForm />
         </div>
       </section>
     </>
