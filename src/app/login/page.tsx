@@ -76,7 +76,7 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const userCredential = await signInWithGoogle(auth, firestore);
+      const userCredential = await signInWithGoogle(auth, firestore, { allowSignup: false });
       await handleRedirect(userCredential.user.uid);
     } catch (error: any) {
       toast({

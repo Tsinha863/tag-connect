@@ -86,7 +86,7 @@ export default function SignupPage() {
     const handleGoogleSignIn = async () => {
         try {
           const role = form.getValues('role');
-          const userCredential = await signInWithGoogle(auth, firestore, role);
+          const userCredential = await signInWithGoogle(auth, firestore, { role: role, allowSignup: true });
           await handleRedirect(userCredential.user.uid);
         } catch (error: any) {
           toast({

@@ -10,7 +10,12 @@ import {
 } from 'firebase/auth';
 import { Firestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
-export async function signInWithGoogle(auth: Auth, firestore: Firestore, role: 'student' | 'company' = 'student') {
+export async function signInWithGoogle(
+  auth: Auth,
+  firestore: Firestore,
+  options: { role?: 'student' | 'company'; allowSignup?: boolean } = {}
+) {
+  const { role = 'student', allowSignup = true } = options;
   const provider = new GoogleAuthProvider();
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
@@ -20,6 +25,11 @@ export async function signInWithGoogle(auth: Auth, firestore: Firestore, role: '
   const userProfileSnap = await getDoc(userProfileRef);
 
   if (!userProfileSnap.exists()) {
+    if (!allowSignup) {
+      await signOut(auth); // Sign out the user if they're not supposed to sign up
+      throw new Error('Account not found. Please sign up first.');
+    }
+    
     // This is a new user, create a profile.
     const newUserProfile = {
       id: user.uid,

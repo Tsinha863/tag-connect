@@ -1,6 +1,7 @@
 'use client';
 
 import { useUser, FirestorePermissionError, errorEmitter, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { getUserRole } from '@/firebase/auth';
 import { doc, setDoc, serverTimestamp, query, collection, where, limit } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,8 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
     const { toast } = useToast();
     const [isApplying, setIsApplying] = useState(false);
     const [hasApplied, setHasApplied] = useState(false);
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [isRoleLoading, setIsRoleLoading] = useState(true);
 
     const applicationQuery = useMemoFirebase(() => {
         if (!user || !job) return null;
@@ -32,6 +35,19 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
         }
     }, [applications]);
 
+    useEffect(() => {
+        if (user && firestore) {
+            setIsRoleLoading(true);
+            getUserRole(firestore, user.uid).then(role => {
+                setUserRole(role);
+                setIsRoleLoading(false);
+            });
+        } else if (!isUserLoading) {
+            // If there's no user and we are not loading one, role loading is finished.
+            setIsRoleLoading(false);
+        }
+    }, [user, firestore, isUserLoading]);
+
     const handleApply = async () => {
         if (!user) {
             router.push('/login');
@@ -39,7 +55,6 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
         }
         if (!job) return;
 
-        const userRole = await getUserRole(firestore, user.uid);
         if (userRole !== 'student') {
             toast({ variant: 'destructive', title: 'Cannot Apply', description: 'Only students can apply for jobs.' });
             return;
@@ -81,20 +96,10 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
             });
     };
 
-    const getUserRole = async (firestore: any, uid: string) => {
-      const userDoc = await doc(firestore, 'users', uid).get();
-      if (userDoc.exists()) {
-        return userDoc.data().role;
-      }
-      return null;
-    }
-
-    if (isUserLoading || isApplicationLoading) {
+    if (isUserLoading || isApplicationLoading || isRoleLoading) {
         return <Button disabled size="lg"><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking status...</Button>
     }
     
-    const userRole = user ? (user as any).role : null;
-
     if (user && userRole === 'student') {
         return (
             <Button onClick={handleApply} disabled={isApplying || hasApplied} size="lg">
@@ -120,6 +125,6 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
          );
     }
 
-    // Default case for other roles or if user is logged in but not student/owner
+    // Default case for other roles or if user is logged in but not a student
     return null;
 }
