@@ -7,6 +7,12 @@
       "imageHint": "students collaborating"
     },
     {
+      "id": "our-story",
+      "description": "A focused team of diverse individuals collaborating around a table in a creative workspace.",
+      "imageUrl": "https://images.unsplash.com/photo-1556761175-b413da4baf72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxidXNpbmVzcyUyMHRlYW0lMjBzbWFsbHxibF9kfGVufDB8fHx8MTc3MzU1Nzg5N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "business team small"
+    },
+    {
       "id": "testimonial-1",
       "description": "A smiling professional man.",
       "imageUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBtYW58ZW58MHx8fHwxNzcyMjA1NjQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",

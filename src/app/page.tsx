@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-split');
+const storyImage = PlaceHolderImages.find(p => p.id === 'our-story');
 
 const whyChooseUsPoints = [
   {
@@ -98,12 +99,43 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* Our Story Section */}
+      <section className="py-16 md:py-24 bg-background">
+        <div className="container">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {storyImage && (
+              <div className="relative h-80 md:h-[450px] w-full rounded-2xl overflow-hidden shadow-xl">
+                <Image
+                  src={storyImage.imageUrl}
+                  alt={storyImage.description}
+                  data-ai-hint={storyImage.imageHint}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <div className="text-center md:text-left md:pl-8">
+              <p className="text-primary font-semibold tracking-wide uppercase">Our Story</p>
+              <h2 className="font-bold text-3xl md:text-4xl mt-2 tracking-tight">
+                Born from a simple belief: Potential is everywhere.
+              </h2>
+              <p className="mt-6 text-lg text-muted-foreground">
+                TAG Connect started with a conversation. We saw brilliant students with incredible drive, but they were struggling to get their foot in the door. On the other side, we saw companies searching for fresh talent but overlooking the vast potential in our local communities.
+                <br/><br/>
+                We knew we had to bridge this gap. Our mission isn't just about filling positions; it's about launching careers and building futures. We're a team dedicated to seeing the person behind the resume and connecting them with a company where they won't just work, but thrive.
+              </p>
+              <p className="mt-6 font-semibold text-muted-foreground">- The TAG Connect Founders</p>
+            </div>
+          </div>
+        </div>
+      </section>
       
-      {/* Asymmetric Grid for "Why Choose Us" */}
+      {/* Asymmetric Grid for "Our Promise" */}
       <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
         <div className="container">
            <div className="text-center mb-12">
-             <h2 className="text-3xl font-bold tracking-tight">More Than a Platform, We're Your Partner</h2>
+             <h2 className="text-3xl font-bold tracking-tight">Our Promise to You</h2>
              <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
                 Your career is a journey, and we're here for every step. We believe in fostering potential and creating opportunities where students can truly grow.
              </p>
