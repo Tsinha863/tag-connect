@@ -2,14 +2,14 @@
 
 import { useUser, FirestorePermissionError, errorEmitter, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { getUserRole } from '@/firebase/auth';
-import { doc, setDoc, serverTimestamp, query, collection, where, limit } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, query, collection, where, limit, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import type { Job } from '@/lib/types';
+import type { Job, StudentProfile } from '@/lib/types';
 import Link from 'next/link';
 
 export function JobApplyButton({ job }: { job: Job & { id: string } }) {
@@ -62,6 +62,19 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
 
         setIsApplying(true);
 
+        // Fetch student profile to get CV url
+        const studentProfileRef = doc(firestore, 'studentProfiles', user.uid);
+        const studentProfileSnap = await getDoc(studentProfileRef);
+
+        if (!studentProfileSnap.exists()) {
+            toast({ variant: 'destructive', title: 'Profile Not Found', description: 'Please complete your student profile before applying.' });
+            setIsApplying(false);
+            router.push('/student/profile');
+            return;
+        }
+
+        const studentProfile = studentProfileSnap.data() as StudentProfile;
+
         const applicationId = uuidv4();
         const applicationData = {
             id: applicationId,
@@ -73,6 +86,7 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
             companyName: job.companyName,
             status: 'applied',
             appliedAt: serverTimestamp(),
+            cvUrl: studentProfile.cvUrl || '',
         };
 
         const applicationRef = doc(firestore, 'applications', applicationId);
@@ -128,3 +142,5 @@ export function JobApplyButton({ job }: { job: Job & { id: string } }) {
     // Default case for other roles or if user is logged in but not a student
     return null;
 }
+
+    

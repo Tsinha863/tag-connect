@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useDoc, useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, query, where, updateDoc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import type { Job, Application, StudentProfile, Placement } from '@/lib/types';
+import type { Job, Application, Placement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -21,13 +21,6 @@ function ApplicantRow({ application }: { application: Application & { id: string
     const firestore = useFirestore();
     const { toast } = useToast();
     const [isUpdating, setIsUpdating] = React.useState(false);
-
-    const studentProfileRef = useMemoFirebase(() => {
-        if (!application) return null;
-        return doc(firestore, 'studentProfiles', application.studentId);
-    }, [firestore, application.studentId]);
-    
-    const { data: studentProfile, isLoading } = useDoc<StudentProfile>(studentProfileRef);
     
     const handleStatusChange = async (status: 'shortlisted' | 'rejected' | 'hired') => {
         setIsUpdating(true);
@@ -43,7 +36,7 @@ function ApplicantRow({ application }: { application: Application & { id: string
                     
                     // This must be awaited as we need the job data
                     getDoc(jobRef).then(jobSnap => {
-                        if (jobSnap.exists() && studentProfile) {
+                        if (jobSnap.exists()) {
                             const job = jobSnap.data() as Job;
                             const salary = job.salaryMax || job.salaryMin || 0;
                             // Assuming 8.33% commission as a default, can be edited by admin
@@ -95,10 +88,6 @@ function ApplicantRow({ application }: { application: Application & { id: string
                 setIsUpdating(false);
             });
     }
-
-    if (isLoading) {
-        return <TableRow><TableCell colSpan={5}><Skeleton className="h-8 w-full" /></TableCell></TableRow>;
-    }
     
     return (
         <TableRow>
@@ -124,9 +113,9 @@ function ApplicantRow({ application }: { application: Application & { id: string
                 </Badge>
             </TableCell>
             <TableCell>
-                {studentProfile?.cvUrl ? (
+                {application.cvUrl ? (
                     <Button variant="link" asChild className="p-0 h-auto">
-                        <a href={studentProfile.cvUrl} target="_blank" rel="noopener noreferrer">View CV</a>
+                        <a href={application.cvUrl} target="_blank" rel="noopener noreferrer">View CV</a>
                     </Button>
                 ) : (
                     <span className="text-muted-foreground text-sm">No CV</span>
@@ -226,3 +215,5 @@ export default function JobApplicantsPage() {
         </div>
     )
 }
+
+    

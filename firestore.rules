@@ -47,12 +47,9 @@ service cloud.firestore {
       allow create: if isOwnerAsRole(studentId, 'student') || isAdmin();
       allow update, delete: if isOwner(studentId) || isAdmin();
 
-      // Students can read their own profile. Admins can read any.
-      // Companies can read student profiles to view candidates who have applied.
-      // NOTE: This rule allows any company to read any student profile if they know the ID.
-      // It does not enforce that an application must exist first, as this is complex
-      // and costly to enforce in security rules. Listing all profiles is blocked to prevent scraping.
-      allow get: if isOwner(studentId) || isRequestingUserACompany() || isAdmin();
+      // Only the owner or an admin can view a full student profile.
+      // Companies can see applicant details via the Application document.
+      allow get: if isOwner(studentId) || isAdmin();
       allow list: if isAdmin();
     }
 
@@ -85,8 +82,13 @@ service cloud.firestore {
       // Only the company or an admin can update the application status.
       allow update: if isOwner(resource.data.companyId) || isAdmin();
 
-      // Authenticated users can list applications (queries will be filtered on the client).
-      allow list: if isSignedIn();
+      // Students can query their own applications.
+      // Companies can query applications for their jobs.
+      // Admins can query anything.
+      allow list: if (getRole() == 'student' && request.query.where.studentId == request.auth.uid) ||
+                     (getRole() == 'company' && request.query.where.companyId == request.auth.uid) ||
+                     (getRole() == 'company' && isOwner(get(/databases/$(database)/documents/jobs/$(request.query.where.jobId)).data.companyId)) ||
+                     isAdmin();
     }
 
     match /placements/{placementId} {
@@ -102,3 +104,5 @@ service cloud.firestore {
     }
   }
 }
+
+    

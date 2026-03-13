@@ -81,6 +81,7 @@ export type Application = {
   companyName: string;
   status: 'applied' | 'shortlisted' | 'hired' | 'rejected';
   appliedAt: any;
+  cvUrl?: string;
 };
 
 export type Placement = {
@@ -108,6 +109,8 @@ export type Inquiry = {
   message: string;
   createdAt: any;
 };
+
+    
 
     
 

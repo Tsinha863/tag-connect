@@ -375,6 +375,11 @@
           "type": "string",
           "description": "Denormalized name of the company for the job."
         },
+        "cvUrl": {
+          "type": "string",
+          "description": "Denormalized URL to the student's CV at the time of application.",
+          "format": "uri"
+        },
         "status": {
           "type": "string",
           "description": "The current status of the job application (e.g., 'pending', 'shortlisted', 'rejected', 'hired')."
@@ -658,4 +663,6 @@
   }
 }
     
+    
+
     
