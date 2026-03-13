@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useDoc, useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
+import { useUser, useDoc, useCollection, useFirestore, useMemoFirebase, FirestorePermissionError, errorEmitter } from '@/firebase';
 import { collection, doc, query, where, updateDoc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import type { Job, Application, Placement } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -145,6 +145,7 @@ export default function JobApplicantsPage() {
     const params = useParams();
     const jobId = params.jobId as string;
     const firestore = useFirestore();
+    const { user } = useUser();
 
     const jobRef = useMemoFirebase(() => {
         if (!jobId) return null;
@@ -153,9 +154,9 @@ export default function JobApplicantsPage() {
     const { data: job, isLoading: isJobLoading } = useDoc<Job>(jobRef);
 
     const applicationsQuery = useMemoFirebase(() => {
-        if (!jobId) return null;
-        return query(collection(firestore, 'applications'), where('jobId', '==', jobId));
-    }, [firestore, jobId]);
+        if (!jobId || !user) return null;
+        return query(collection(firestore, 'applications'), where('jobId', '==', jobId), where('companyId', '==', user.uid));
+    }, [firestore, jobId, user]);
 
     const { data: applications, isLoading: areApplicationsLoading } = useCollection<Application>(applicationsQuery);
 
@@ -215,5 +216,3 @@ export default function JobApplicantsPage() {
         </div>
     )
 }
-
-    

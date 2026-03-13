@@ -87,7 +87,6 @@ service cloud.firestore {
       // Admins can query anything.
       allow list: if (getRole() == 'student' && request.query.where.studentId == request.auth.uid) ||
                      (getRole() == 'company' && request.query.where.companyId == request.auth.uid) ||
-                     (getRole() == 'company' && isOwner(get(/databases/$(database)/documents/jobs/$(request.query.where.jobId)).data.companyId)) ||
                      isAdmin();
     }
 
@@ -104,5 +103,3 @@ service cloud.firestore {
     }
   }
 }
-
-    
