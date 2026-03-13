@@ -1,4 +1,4 @@
-import { getJobBySlug } from '@/lib/jobs-server';
+import { getJobBySlug, getAllJobsForSitemap } from '@/lib/jobs-server';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -10,6 +10,18 @@ import { Briefcase, Calendar, CircleDollarSign, GraduationCap, Lightbulb, MapPin
 import { JobApplyButton } from './JobApplyButton';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+
+// Revalidate job pages at most once per hour
+export const revalidate = 3600;
+
+// Generate static paths for all open jobs at build time
+export async function generateStaticParams() {
+    const jobs = await getAllJobsForSitemap();
+    // Handle cases where job.slug might not be defined
+    return jobs.filter(job => job.slug).map((job) => ({
+        slug: job.slug,
+    }));
+}
 
 type Props = {
     params: { slug: string };
@@ -165,5 +177,3 @@ export default async function JobDetailsPage({ params }: Props) {
         </>
     );
 }
-
-    
