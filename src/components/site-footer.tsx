@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
-import { Button } from '@/components/ui/button';
-import { Github, Linkedin, Twitter } from 'lucide-react';
 
 const footerLinks = {
   "For Candidates": [
@@ -19,12 +17,6 @@ const footerLinks = {
     { href: "/admin/dashboard", label: "Admin Login" },
   ],
 };
-
-const socialLinks = [
-  { name: 'Twitter', href: "#", icon: Twitter },
-  { name: 'Github', href: "#", icon: Github },
-  { name: 'Linkedin', href: "#", icon: Linkedin },
-];
 
 export function SiteFooter() {
   return (
@@ -56,15 +48,6 @@ export function SiteFooter() {
           <p className="text-sm text-muted-foreground">
             &copy; {new Date().getFullYear()} TAG MEDIA. All rights reserved.
           </p>
-          <div className="flex gap-2">
-            {socialLinks.map((link) => (
-              <Button key={link.name} variant="ghost" size="icon" asChild>
-                <Link href={link.href}>
-                  <link.icon className="h-4 w-4" />
-                </Link>
-              </Button>
-            ))}
-          </div>
         </div>
       </div>
     </footer>
